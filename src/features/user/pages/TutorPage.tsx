@@ -1,9 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { mockTutors } from "../data/tutors";
 import { TutorCard } from "../components/TutorCard";
-import { UserHeader } from "../components/UserHeader";
-import { UserFooter } from "../components/UserFooter";
-
 const SUBJECTS = [
   "Toán học",
   "Tiếng Anh",
@@ -123,9 +120,7 @@ function TutorPage() {
   );
 
   return (
-    <div className="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
-      <UserHeader />
-
+    <>
       {/* Search Header Section */}
       <section className="bg-white dark:bg-background-dark border-b border-slate-200 dark:border-slate-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -455,9 +450,7 @@ function TutorPage() {
           </div>
         </div>
       </main>
-
-      <UserFooter />
-    </div>
+    </>
   );
 }
 

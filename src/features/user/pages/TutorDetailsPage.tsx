@@ -1,15 +1,11 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { UserHeader } from "../components/UserHeader";
-import { UserFooter } from "../components/UserFooter";
 
 function TutorDetailsPage() {
   const { id } = useParams();
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
-      <UserHeader />
-
+    <>
       <main className="max-w-[1440px] mx-auto px-6 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1 space-y-8">
@@ -497,10 +493,8 @@ function TutorDetailsPage() {
             </div>
           </div>
         </section>
-      </main>
-
-      <UserFooter />
-    </div>
+      </main>{" "}
+    </>
   );
 }
 

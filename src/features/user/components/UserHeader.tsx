@@ -35,18 +35,18 @@ export function UserHeader() {
               >
                 Tìm gia sư
               </Link>
-              <a
+              <Link
                 className="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
-                href="#"
+                to="/about"
               >
-                Lớp học mới
-              </a>
-              <a
+                Về chúng tôi
+              </Link>
+              <Link
                 className="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
-                href="#"
+                to="/faq"
               >
-                Trở thành gia sư
-              </a>
+                FAQ
+              </Link>
             </div>
 
             <div className="flex items-center gap-3 ml-2 lg:ml-6 border-l border-slate-200 dark:border-slate-700 pl-4 lg:pl-6">

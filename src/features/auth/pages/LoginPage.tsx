@@ -50,7 +50,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     console.log("Logging in with:", { email, password });
   };
@@ -275,7 +275,7 @@ function LoginPage() {
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 New to EduConnect?{" "}
                 <Link
-                  to="/signup"
+                  to="/register"
                   className="font-bold text-blue-600 hover:underline"
                 >
                   Create an account
