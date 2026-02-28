@@ -1,67 +1,14 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { UserHeader } from "../components/UserHeader";
+import { UserFooter } from "../components/UserFooter";
 
 function TutorDetailsPage() {
   const { id } = useParams();
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
-      <header className="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2 text-primary">
-              <span className="material-symbols-outlined text-3xl font-bold">
-                school
-              </span>
-              <h1 className="text-xl font-bold tracking-tight">NEDU</h1>
-            </Link>
-            <div className="relative hidden lg:block w-80">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                search
-              </span>
-              <input
-                className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-xl focus:ring-2 focus:ring-primary/50 text-sm"
-                placeholder="Tìm kiếm gia sư, khóa học..."
-                type="text"
-              />
-            </div>
-          </div>
-          <nav className="flex items-center gap-8">
-            <Link
-              className="text-sm font-medium hover:text-primary transition-colors"
-              to="/tutor"
-            >
-              Duyệt gia sư
-            </Link>
-            <a
-              className="text-sm font-medium hover:text-primary transition-colors"
-              href="#"
-            >
-              Cách hoạt động
-            </a>
-            <a
-              className="text-sm font-medium hover:text-primary transition-colors"
-              href="#"
-            >
-              Bảng giá
-            </a>
-            <div className="flex items-center gap-3 ml-4">
-              <Link
-                to="/login"
-                className="px-5 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-xl hover:bg-slate-200 transition-colors"
-              >
-                Đăng nhập
-              </Link>
-              <Link
-                to="/register"
-                className="px-5 py-2 text-sm font-bold bg-primary text-white rounded-xl hover:opacity-90 transition-opacity"
-              >
-                Đăng ký
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <UserHeader />
 
       <main className="max-w-[1440px] mx-auto px-6 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -552,87 +499,7 @@ function TutorDetailsPage() {
         </section>
       </main>
 
-      <footer className="mt-20 border-t border-slate-200 dark:border-slate-800 py-12 bg-white dark:bg-background-dark">
-        <div className="max-w-[1440px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-primary">
-              <span className="material-symbols-outlined text-3xl font-bold">
-                school
-              </span>
-              <h2 className="text-xl font-bold tracking-tight">NEDU</h2>
-            </div>
-            <p className="text-slate-500 text-sm leading-relaxed">
-              Nền tảng kết nối gia sư và học viên hàng đầu Việt Nam. Chất lượng
-              và uy tín là ưu tiên hàng đầu của chúng tôi.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-bold text-sm uppercase tracking-widest">
-              Dành cho học viên
-            </h4>
-            <ul className="space-y-2 text-sm text-slate-500">
-              <li>
-                <Link
-                  className="hover:text-primary transition-colors"
-                  to="/tutor"
-                >
-                  Tìm gia sư
-                </Link>
-              </li>
-              <li>
-                <a className="hover:text-primary transition-colors" href="#">
-                  Lộ trình học tập
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary transition-colors" href="#">
-                  Đánh giá gia sư
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-bold text-sm uppercase tracking-widest">
-              Dành cho gia sư
-            </h4>
-            <ul className="space-y-2 text-sm text-slate-500">
-              <li>
-                <a className="hover:text-primary transition-colors" href="#">
-                  Đăng ký dạy
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary transition-colors" href="#">
-                  Quản lý lớp học
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-primary transition-colors" href="#">
-                  Kinh nghiệm dạy
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-bold text-sm uppercase tracking-widest">
-              Liên hệ
-            </h4>
-            <ul className="space-y-2 text-sm text-slate-500">
-              <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">mail</span>{" "}
-                contact@nedu.vn
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">call</span>{" "}
-                1900 1234
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-[1440px] mx-auto px-6 mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-400">
-          © 2024 NEDU Education Platform. All rights reserved.
-        </div>
-      </footer>
+      <UserFooter />
     </div>
   );
 }
