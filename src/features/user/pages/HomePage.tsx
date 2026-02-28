@@ -1,3 +1,4 @@
+import { CalendarCheck, ChartLine, ShieldCheck, Star } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -99,9 +100,11 @@ function HomePage() {
             <div className="grid md:grid-cols-3 gap-8">
               <div className="p-10 rounded-3xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:shadow-xl hover:shadow-primary/5 transition-all group">
                 <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-primary text-3xl">
-                    verified_user
-                  </span>
+                  <ShieldCheck
+                    size={30}
+                    className="text-primary"
+                    strokeWidth={2.5}
+                  />
                 </div>
                 <h3 className="text-xl font-bold mb-3">
                   Gia sư xác thực (eKYC)
@@ -113,9 +116,11 @@ function HomePage() {
               </div>
               <div className="p-10 rounded-3xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:shadow-xl hover:shadow-primary/5 transition-all group">
                 <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-primary text-3xl">
-                    query_stats
-                  </span>
+                  <ChartLine
+                    size={30}
+                    className="text-primary"
+                    strokeWidth={2.5}
+                  />
                 </div>
                 <h3 className="text-xl font-bold mb-3">Lộ trình cá nhân hóa</h3>
                 <p className="text-slate-500 leading-relaxed">
@@ -125,9 +130,11 @@ function HomePage() {
               </div>
               <div className="p-10 rounded-3xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:shadow-xl hover:shadow-primary/5 transition-all group">
                 <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-primary text-3xl">
-                    event_available
-                  </span>
+                  <CalendarCheck
+                    size={30}
+                    className="text-primary"
+                    strokeWidth={2.5}
+                  />
                 </div>
                 <h3 className="text-xl font-bold mb-3">Học thử miễn phí</h3>
                 <p className="text-slate-500 leading-relaxed">
@@ -230,9 +237,11 @@ function HomePage() {
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBLf-BY3B5f3wL-UBsF3NfpWxFCupty4_RkdwUZC9DqAX-Gv8Hq9gnzZbQY2I_zv3IEOiB8R-AiE2v3yGw4O27b0nBaam63hHL0yArgsJ8mRbmVelEkGUIrLGyzsikvnN_nCSU23VnauvOxsj-rpzVQtMfeHlzUSVHLNuAcKWeBq_IzONFdAfw-s7UCo1uCYEUtY4cQwX3XGnU3IookHCDWMYjQXCBg4XGQf-GZtDdnyEmT1WbFtGkagInvvi-BqWp9auXXLRkPUE"
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <span className="material-symbols-outlined text-yellow-500 text-sm fill-current">
-                      star
-                    </span>{" "}
+                    <Star
+                      size={14}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />{" "}
                     4.9
                   </div>
                 </div>
@@ -267,9 +276,11 @@ function HomePage() {
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFwLf2O_7_PCZRH2K3HBN_3wJJAmTgcGUdZlJbVtnNf9gY0tktgmXzK6_PCAiUv-cKBqAs-YcxucBw8oPW2G3QQ_MQx6XvnyHTAFhH3M12JI01SCfJdJTtnxkfh9ao8wrJVnCWC4qT-nveZuGyE9r22w65ey2Vz_IlbKjv7UQlYhYa3RKtd2z8YjhMOpx80h-TA3ugjBOikda3e0lQwu8MQlJugMjffQh7eAUvkp29V5YHeZq-hyQ7kYj_-0bryyONSs-T0JdDQpk"
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <span className="material-symbols-outlined text-yellow-500 text-sm fill-current">
-                      star
-                    </span>{" "}
+                    <Star
+                      size={14}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />{" "}
                     5.0
                   </div>
                 </div>
@@ -304,9 +315,11 @@ function HomePage() {
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM-BPrn8v0eCavFwQHIvNsPlKsbBNIe_uGUCYVdUwCXQOrRsdK5g35lmyfGcuIjw1hVKb-vKrRv8DkSKois4KwGotpGQKcxy4hIh3Tb8U3TiOZvoJcjnUsWqH-nnFGtENQZOvrHENzx197fY2wiAilRG2l5LE2yV68HEdbhtGcVpP9NP0BOxBwisE-jVjlsu_cCtSD0XpgxAqVTlcc0wi7sc60gwIlsZJ3H4l6oJVAMz1PahbqPmAnC9hIWwXVGt2c3hsFqvmP4pY"
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <span className="material-symbols-outlined text-yellow-500 text-sm fill-current">
-                      star
-                    </span>{" "}
+                    <Star
+                      size={14} // Tương đương text-sm (khoảng 14-16px)
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />{" "}
                     4.8
                   </div>
                 </div>
@@ -341,9 +354,11 @@ function HomePage() {
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxfnejoEW-R5M_ocEDiMvGXOWsrXcEgw84FLPzQOi5ZIGpuETYv8dcfjJfsHlXyhyQsBPx4_4N9c0hCYaBXNtmHvZhlt79_DHspNZvftSLaIFKLssE9rn9Jl8FPeEhcinsKJecBJFDi5WAzMCXQKAH6UU6PJmoXOmP6gy9RduNnUb1Rp_W2lJbwHu9dDFPiFrFegsza4hKMpTPDY2KLvdFi2bSsTiStjgXqEkY_CSu2svvfTzN1Go2lO5rDC3LwTPJ80UK1nSenZU"
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <span className="material-symbols-outlined text-yellow-500 text-sm fill-current">
-                      star
-                    </span>{" "}
+                    <Star
+                      size={14}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />{" "}
                     4.9
                   </div>
                 </div>
@@ -396,21 +411,31 @@ function HomePage() {
               <div className="lg:col-span-2 grid md:grid-cols-2 gap-8">
                 <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-lg border border-slate-50 dark:border-slate-800">
                   <div className="flex gap-1 text-yellow-500 mb-4">
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
                   </div>
                   <p className="text-slate-600 dark:text-slate-400 mb-6 italic">
                     "Con tôi từ một học sinh sợ môn Tiếng Anh đã trở nên tự tin
@@ -432,21 +457,31 @@ function HomePage() {
 
                 <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-lg border border-slate-50 dark:border-slate-800">
                   <div className="flex gap-1 text-yellow-500 mb-4">
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
-                    <span className="material-symbols-outlined fill-current text-sm">
-                      star
-                    </span>
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
+                    <Star
+                      size={16}
+                      className="text-yellow-500 fill-yellow-500"
+                      strokeWidth={2}
+                    />
                   </div>
                   <p className="text-slate-600 dark:text-slate-400 mb-6 italic">
                     "Em đã đạt được mục tiêu 8.0 IELTS nhờ sự hướng dẫn của thầy

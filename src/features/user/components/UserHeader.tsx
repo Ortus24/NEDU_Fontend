@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Logo from "../../../shared/components/Logo";
+import { Search } from "lucide-react";
 
 export function UserHeader() {
   return (
@@ -8,17 +10,17 @@ export function UserHeader() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center gap-2 text-primary">
-              <span className="material-symbols-outlined text-3xl font-bold">
-                school
-              </span>
+              <Logo />
               <h1 className="text-2xl font-bold tracking-tight">NEDU</h1>
             </Link>
 
             {/* Search Bar - Hidden on small screens */}
             <div className="relative hidden lg:block w-80">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                search
-              </span>
+              <Search
+                size={20}
+                className="text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"
+                strokeWidth={2}
+              />
               <input
                 className="w-full pl-10 pr-4 py-2 bg-slate-100/80 dark:bg-slate-800/80 border-none rounded-xl focus:ring-2 focus:ring-primary/50 text-sm focus:outline-none"
                 placeholder="Tìm kiếm gia sư, khóa học..."

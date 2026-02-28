@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Tutor } from "../data/tutors";
+import { Star } from "lucide-react";
 
 interface TutorCardProps {
   tutor: Tutor;
@@ -23,9 +24,11 @@ export function TutorCard({ tutor }: TutorCardProps) {
           </div>
         </div>
         <div className="flex items-center gap-1 bg-orange-50 dark:bg-orange-950/30 px-2 py-1 rounded-lg">
-          <span className="material-symbols-outlined text-orange-400 text-sm">
-            star
-          </span>
+          <Star
+            size={16}
+            className="text-orange-400 fill-orange-400"
+            strokeWidth={2}
+          />
           <span className="text-xs font-bold text-orange-600">
             {tutor.rating.toFixed(1)}
           </span>

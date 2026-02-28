@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { mockTutors } from "../data/tutors";
 import { TutorCard } from "../components/TutorCard";
+import { ChevronLeft, ChevronRight, Filter, Search, Star } from "lucide-react";
 const SUBJECTS = [
   "Toán học",
   "Tiếng Anh",
@@ -127,7 +128,11 @@ function TutorPage() {
           <div className="max-w-4xl">
             <div className="relative flex items-center mb-6">
               <div className="absolute left-4 text-slate-400 flex items-center">
-                <span className="material-symbols-outlined">search</span>
+                <Search
+                  size={20}
+                  strokeWidth={2}
+                  className="text-gray-500 hover:text-primary transition-colors"
+                />
               </div>
               <input
                 className="w-full pl-12 pr-32 py-4 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-2 focus:ring-primary focus:outline-none text-lg"
@@ -171,7 +176,11 @@ function TutorPage() {
             <div className="bg-white dark:bg-background-dark rounded-xl border border-slate-200 dark:border-slate-800 p-6 sticky top-24">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2">
-                  <span className="material-symbols-outlined">filter_list</span>{" "}
+                  <Filter
+                    size={20}
+                    strokeWidth={2}
+                    className="text-gray-500 hover:text-primary transition-colors"
+                  />
                   Bộ lọc
                 </h2>
                 <button
@@ -282,10 +291,10 @@ function TutorPage() {
                   {[5, 4, 3, 2, 1].map((rating) => (
                     <label
                       key={rating}
-                      className="flex items-center gap-3 cursor-pointer group"
+                      className="flex items-center gap-3 cursor-pointer group hover:bg-slate-50 dark:hover:bg-slate-800/50 p-1 rounded-md transition-colors"
                     >
                       <input
-                        className="w-5 h-5 border-slate-300 text-primary focus:ring-primary"
+                        className="w-5 h-5 border-slate-300 text-primary focus:ring-primary cursor-pointer"
                         name="rating"
                         type="radio"
                         checked={selectedRating === rating}
@@ -294,20 +303,20 @@ function TutorPage() {
                           setCurrentPage(1);
                         }}
                       />
-                      <div className="flex items-center gap-1 text-orange-400">
+                      <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
-                          <span
+                          <Star
                             key={i}
-                            className={`material-symbols-outlined text-sm ${
+                            size={16} // Tương đương text-sm
+                            // Tối ưu: fill (đổ màu nền) cho sao được chọn, stroke (viền) cho sao chưa chọn
+                            className={`${
                               i < rating
-                                ? ""
+                                ? "text-orange-400 fill-orange-400"
                                 : "text-slate-300 dark:text-slate-700"
                             }`}
-                          >
-                            star
-                          </span>
+                          />
                         ))}
-                        <span className="text-slate-600 dark:text-slate-400 text-sm ml-1">
+                        <span className="text-slate-600 dark:text-slate-400 text-sm ml-1 font-medium">
                           {rating === 5 ? "5.0" : `${rating}.0+`}
                         </span>
                       </div>
@@ -412,9 +421,11 @@ function TutorPage() {
                       disabled={currentPage === 1}
                       className="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 text-slate-600 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-600"
                     >
-                      <span className="material-symbols-outlined">
-                        chevron_left
-                      </span>
+                      <ChevronLeft
+                        size={24}
+                        strokeWidth={2}
+                        className="text-slate-600 hover:text-primary transition-all active:scale-90"
+                      />
                     </button>
                   </li>
                   {Array.from({ length: totalPages }).map((_, i) => (
@@ -439,9 +450,11 @@ function TutorPage() {
                       disabled={currentPage === totalPages}
                       className="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-background-dark border border-slate-200 dark:border-slate-800 text-slate-600 hover:text-primary disabled:opacity-30 disabled:hover:text-slate-600"
                     >
-                      <span className="material-symbols-outlined">
-                        chevron_right
-                      </span>
+                      <ChevronRight
+                        size={24}
+                        strokeWidth={2}
+                        className="text-slate-600 hover:text-primary transition-all active:scale-90"
+                      />
                     </button>
                   </li>
                 </ul>

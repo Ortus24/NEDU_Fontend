@@ -1,5 +1,31 @@
-import React, { useState } from "react";
+import {
+  AlertCircle,
+  Calendar,
+  GraduationCap,
+  Mail,
+  Phone,
+  User,
+  X,
+  Lock,
+  ArrowLeft,
+  ArrowRight,
+  Bell,
+  Check,
+  Info,
+  Upload,
+  FileText,
+  Trash,
+  ContactRound,
+  CircleCheck,
+  TrendingUp,
+  Hourglass,
+  Flag,
+  Headset,
+  Home,
+} from "lucide-react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Logo from "../../../shared/components/Logo";
 
 type Role = "student" | "tutor" | null;
 
@@ -7,6 +33,23 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<Role>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isErrorVisible, setIsErrorVisible] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    if (error) {
+      setIsErrorVisible(true);
+      timeoutId = setTimeout(() => {
+        setIsErrorVisible(false);
+        // Đợi animation fade-out chạy xong rồi mới clear error state
+        setTimeout(() => setError(null), 300);
+      }, 3000);
+    }
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [error]);
 
   // Constants
   const isStudent = role === "student";
@@ -15,12 +58,12 @@ export default function RegisterPage() {
   // Progress variables
   const currentStep = step;
   const totalSteps = isStudent ? 2 : 4;
-  const progressPercent = (currentStep / totalSteps) * 100;
+  const progressPercent = ((currentStep - 1) / totalSteps) * 100;
 
   // Handles moving to next step
   const handleNext = () => {
     if (step === 1 && !role) {
-      alert("Vui lòng chọn vai trò!");
+      setError("Vui lòng chọn vai trò để tiếp tục!");
       return;
     }
 
@@ -47,6 +90,36 @@ export default function RegisterPage() {
   if (step === 1) {
     return (
       <div className="relative flex min-h-[100vh] w-full flex-col overflow-x-hidden font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
+        {/* Toast Notification */}
+        {error && (
+          <div
+            className={`fixed right-6 z-50 flex items-center gap-3 rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-rose-50 p-4 text-red-700 shadow-xl dark:border-red-900/50 dark:from-red-950/50 dark:to-rose-950/50 dark:text-red-400 sm:max-w-md transition-all duration-300 ease-in-out ${
+              isErrorVisible
+                ? "top-6 translate-y-0 opacity-100"
+                : "-top-20 -translate-y-full opacity-0"
+            }`}
+          >
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50">
+              <AlertCircle
+                size={24}
+                strokeWidth={2}
+                className="text-red-600 dark:text-red-400 animate-pulse-slow"
+              />
+            </div>
+            <p className="text-sm font-semibold pr-2">{error}</p>
+            <button
+              type="button"
+              onClick={() => setIsErrorVisible(false)}
+              className="ml-auto flex items-center justify-center rounded-full p-1 border border-transparent hover:bg-red-200/50 dark:hover:bg-red-900/50 transition-colors"
+            >
+              <X
+                size={20}
+                strokeWidth={2}
+                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+              />
+            </button>
+          </div>
+        )}
         <div className="flex h-full grow flex-col items-center">
           {/* Header */}
           <header className="flex w-full max-w-[1200px] items-center justify-between px-6 py-6 lg:px-10">
@@ -54,10 +127,12 @@ export default function RegisterPage() {
               to="/"
               className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
             >
-              <div className="flex items-center justify-center rounded-lg bg-primary p-2 text-white">
-                <span className="material-symbols-outlined">auto_stories</span>
-              </div>
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+              <GraduationCap
+                size={32}
+                strokeWidth={2}
+                className="text-blue-600 transition-all hover:scale-110"
+              />
+              <h2 className="text-2xl font-bold tracking-tight text-blue-600 dark:text-slate-100">
                 NEDU
               </h2>
             </Link>
@@ -79,18 +154,21 @@ export default function RegisterPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-primary">
-                    Bước 1 trên 4
+                    Bước 1 trên {totalSteps}
                   </span>
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                     Chọn vai trò của bạn
                   </h3>
                 </div>
                 <p className="text-sm font-bold text-slate-600 dark:text-slate-400">
-                  25%
+                  {Math.round(progressPercent)}%
                 </p>
               </div>
               <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-                <div className="h-full w-1/4 rounded-full bg-primary"></div>
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-500"
+                  style={{ width: `${progressPercent}%` }}
+                ></div>
               </div>
             </div>
 
@@ -112,7 +190,10 @@ export default function RegisterPage() {
                   name="role"
                   className="peer sr-only"
                   checked={role === "student"}
-                  onChange={() => setRole("student")}
+                  onChange={() => {
+                    setRole("student");
+                    setError(null);
+                  }}
                 />
                 <div className="flex h-full flex-col overflow-hidden rounded-xl border-2 border-transparent bg-white p-6 shadow-md transition-all hover:shadow-xl peer-checked:border-primary dark:bg-slate-900">
                   <div className="mb-6 flex h-48 w-full items-center justify-center rounded-lg bg-indigo-50 dark:bg-indigo-900/20">
@@ -152,7 +233,10 @@ export default function RegisterPage() {
                   name="role"
                   className="peer sr-only"
                   checked={role === "tutor"}
-                  onChange={() => setRole("tutor")}
+                  onChange={() => {
+                    setRole("tutor");
+                    setError(null);
+                  }}
                 />
                 <div className="flex h-full flex-col overflow-hidden rounded-xl border-2 border-transparent bg-white p-6 shadow-md transition-all hover:shadow-xl peer-checked:border-primary dark:bg-slate-900">
                   <div className="mb-6 flex h-48 w-full items-center justify-center rounded-lg bg-amber-50 dark:bg-amber-900/20">
@@ -223,10 +307,12 @@ export default function RegisterPage() {
             to="/"
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <div className="flex items-center justify-center rounded-lg bg-primary p-2 text-white">
-              <span className="material-symbols-outlined">auto_stories</span>
-            </div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            <GraduationCap
+              size={32}
+              strokeWidth={2}
+              className="text-blue-600 transition-all hover:scale-110"
+            />
+            <h2 className="text-2xl font-bold tracking-tight text-blue-600 dark:text-slate-100">
               NEDU
             </h2>
           </Link>
@@ -258,7 +344,7 @@ export default function RegisterPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-                      Hoàn thành {progressPercent}%
+                      Hoàn thành {Math.round(progressPercent)}%
                     </p>
                   </div>
                 </div>
@@ -281,9 +367,11 @@ export default function RegisterPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2 col-span-full">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg opacity-70">
-                      person
-                    </span>
+                    <User
+                      size={18} // Tương đương text-lg (khoảng 18px)
+                      strokeWidth={2}
+                      className="opacity-70 text-slate-500"
+                    />
                     Họ và tên
                   </label>
                   <input
@@ -295,9 +383,11 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg opacity-70">
-                      calendar_today
-                    </span>
+                    <Calendar
+                      size={18}
+                      strokeWidth={2}
+                      className="opacity-70 text-slate-500"
+                    />
                     Ngày tháng năm sinh
                   </label>
                   <input
@@ -308,9 +398,11 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg opacity-70">
-                      call
-                    </span>
+                    <Phone
+                      size={18}
+                      strokeWidth={2}
+                      className="opacity-70 text-slate-500"
+                    />
                     Số điện thoại
                   </label>
                   <input
@@ -322,9 +414,11 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex flex-col gap-2 col-span-full">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg opacity-70">
-                      mail
-                    </span>
+                    <Mail
+                      size={18}
+                      strokeWidth={2}
+                      className="opacity-70 text-slate-500"
+                    />
                     Địa chỉ Email
                   </label>
                   <input
@@ -336,9 +430,11 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg opacity-70">
-                      lock
-                    </span>
+                    <Lock
+                      size={18}
+                      strokeWidth={2}
+                      className="opacity-70 text-slate-500"
+                    />
                     Mật khẩu
                   </label>
                   <input
@@ -350,9 +446,11 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <span className="material-symbols-outlined text-lg opacity-70">
-                      lock_reset
-                    </span>
+                    <Lock
+                      size={18}
+                      strokeWidth={2}
+                      className="opacity-70 text-slate-500"
+                    />
                     Nhập lại mật khẩu
                   </label>
                   <input
@@ -370,9 +468,11 @@ export default function RegisterPage() {
                   onClick={handleBack}
                   className="flex-1 px-6 py-3 rounded-lg border border-slate-300 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
                 >
-                  <span className="material-symbols-outlined text-xl">
-                    arrow_back
-                  </span>
+                  <ArrowLeft
+                    size={20}
+                    strokeWidth={2}
+                    className="opacity-70 text-slate-500"
+                  />
                   Quay lại
                 </button>
                 <button
@@ -380,9 +480,11 @@ export default function RegisterPage() {
                   className="flex-[2] px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
                 >
                   {isStudent ? "Hoàn tất đăng ký" : "Tiếp tục"}
-                  <span className="material-symbols-outlined text-xl">
-                    arrow_forward
-                  </span>
+                  <ArrowRight
+                    size={20} // text-xl thường tương đương 20px
+                    strokeWidth={2}
+                    className="text-current transition-transform group-hover:translate-x-1"
+                  />
                 </button>
               </div>
             </form>
@@ -422,10 +524,14 @@ export default function RegisterPage() {
         <header className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3 sticky top-0 z-50">
           <Link to="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
-              <span className="material-symbols-outlined">school</span>
+              <GraduationCap
+                size={32}
+                strokeWidth={2}
+                className="text-white transition-all hover:scale-110"
+              />
             </div>
             <div>
-              <h2 className="text-lg font-bold leading-tight tracking-tight">
+              <h2 className="text-blue-600 font-bold leading-tight tracking-tight">
                 NEDU
               </h2>
               <p className="text-xs text-slate-500 font-medium">
@@ -435,14 +541,12 @@ export default function RegisterPage() {
           </Link>
           <div className="flex items-center gap-4">
             <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
-              <span className="material-symbols-outlined">notifications</span>
+              <Bell size={20} strokeWidth={2} className="text-slate-500" />
             </button>
             <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
             <button className="flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 py-1.5 hover:bg-slate-200 transition-colors">
               <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-primary text-sm">
-                  person
-                </span>
+                <User size={20} strokeWidth={2} className="text-primary" />
               </div>
               <span className="text-sm font-semibold">Tài khoản</span>
             </button>
@@ -461,9 +565,11 @@ export default function RegisterPage() {
               <nav className="flex flex-col gap-2">
                 <div className="flex items-center gap-4 px-4 py-3 rounded-xl border border-transparent">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">
-                    <span className="material-symbols-outlined text-[20px] font-bold">
-                      check
-                    </span>
+                    <Check
+                      size={20}
+                      strokeWidth={2}
+                      className="text-emerald-600"
+                    />
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-slate-400">
@@ -476,9 +582,11 @@ export default function RegisterPage() {
                 </div>
                 <div className="flex items-center gap-4 px-4 py-3 rounded-xl border border-transparent">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">
-                    <span className="material-symbols-outlined text-[20px] font-bold">
-                      check
-                    </span>
+                    <Check
+                      size={20}
+                      strokeWidth={2}
+                      className="text-emerald-600"
+                    />
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-slate-400">
@@ -529,72 +637,70 @@ export default function RegisterPage() {
                 ></div>
               </div>
               <p className="text-[11px] text-slate-400 mt-3 flex items-center gap-1 italic">
-                <span className="material-symbols-outlined text-[14px]">
-                  info
-                </span>
+                <Info size={14} strokeWidth={2} className="text-slate-500" />
                 Hồ sơ của bạn sẽ được duyệt trong 24h
               </p>
             </div>
           </aside>
 
-          <main className="flex-1 bg-white dark:bg-slate-900 min-h-screen overflow-y-auto">
-            <div className="max-w-4xl mx-auto p-6 md:p-10">
-              <div className="mb-10">
-                <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <main className="flex-1 bg-white dark:bg-slate-900 overflow-y-auto">
+            <div className="max-w-4xl mx-auto p-4 md:p-6 lg:p-8">
+              <div className="mb-6">
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                   Bằng cấp & Chứng chỉ
                 </h2>
-                <p className="text-slate-500 mt-2 text-lg">
-                  Vui lòng tải lên các giấy tờ chuyên môn để xác thực năng lực
-                  giảng dạy của bạn.
+                <p className="text-slate-500 mt-1 text-sm">
+                  Vui lòng tải lên các giấy tờ để xác thực năng lực.
                 </p>
               </div>
               <form
-                className="space-y-10"
+                className="space-y-6"
                 onSubmit={(e) => {
                   e.preventDefault();
                   handleNext();
                 }}
               >
                 <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="h-6 w-1 bg-primary rounded-full"></div>
-                    <h3 className="text-xl font-bold">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-5 w-1 bg-primary rounded-full"></div>
+                    <h3 className="text-lg font-bold">
                       1. Bằng đại học hoặc Chứng chỉ liên quan
                     </h3>
                   </div>
-                  <div className="relative group border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-primary/50 dark:hover:border-primary/50 rounded-2xl p-10 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 transition-all cursor-pointer">
-                    <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <span className="material-symbols-outlined text-primary text-3xl">
-                        upload_file
-                      </span>
+                  <div className="relative group border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-primary/50 dark:hover:border-primary/50 rounded-xl p-6 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 transition-all cursor-pointer">
+                    <div className="h-12 w-12 bg-primary/10 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                      <Upload
+                        size={24} // text-2xl trong Tailwind thường là 24px
+                        strokeWidth={2}
+                        className="text-primary transition-transform group-hover:-translate-y-1"
+                      />
                     </div>
-                    <p className="text-slate-900 dark:text-white font-semibold">
+                    <p className="text-slate-900 dark:text-white font-semibold text-sm">
                       Kéo và thả tệp vào đây
                     </p>
-                    <p className="text-slate-500 text-sm mt-1">
-                      Hoặc nhấp để chọn tệp từ máy tính
-                    </p>
-                    <p className="text-xs text-slate-400 mt-4">
-                      Hỗ trợ định dạng: PDF, JPG, PNG (Tối đa 5MB)
+                    <p className="text-slate-500 text-xs mt-1">
+                      Hoặc nhấp để chọn tệp
                     </p>
                     <input
                       className="absolute inset-0 opacity-0 cursor-pointer"
                       type="file"
                     />
                   </div>
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-sm">
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg shadow-sm">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-lg">
-                          <span className="material-symbols-outlined">
-                            description
-                          </span>
+                        <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-md">
+                          <FileText
+                            size={24}
+                            strokeWidth={2}
+                            className="text-blue-500"
+                          />
                         </div>
                         <div>
-                          <p className="text-sm font-semibold">
+                          <p className="text-xs font-semibold">
                             Bang_tot_nghiep_DH.pdf
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-[10px] text-slate-400">
                             2.4 MB • Đã tải lên
                           </p>
                         </div>
@@ -603,35 +709,41 @@ export default function RegisterPage() {
                         className="text-slate-400 hover:text-red-500 transition-colors"
                         type="button"
                       >
-                        <span className="material-symbols-outlined">
-                          delete
-                        </span>
+                        <Trash
+                          size={24}
+                          strokeWidth={2}
+                          className="text-red-500"
+                        />
                       </button>
                     </div>
                   </div>
                 </section>
 
                 <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="h-6 w-1 bg-primary rounded-full"></div>
-                    <h3 className="text-xl font-bold">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-5 w-1 bg-primary rounded-full"></div>
+                    <h3 className="text-lg font-bold">
                       2. Căn cước công dân (CCCD)
                     </h3>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
-                      <span className="material-symbols-outlined text-slate-400 group-hover:text-primary mb-2">
-                        badge
-                      </span>
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+                      <ContactRound
+                        size={24} // Kích thước mặc định tương đương icon font
+                        strokeWidth={2}
+                        className="text-slate-400 group-hover:text-primary mb-1 transition-colors"
+                      />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
                         Mặt trước CCCD
                       </span>
                     </div>
-                    <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
-                      <span className="material-symbols-outlined text-slate-400 group-hover:text-primary mb-2">
-                        id_card
-                      </span>
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                    <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/20 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+                      <ContactRound
+                        size={24}
+                        strokeWidth={2}
+                        className="text-slate-400 group-hover:text-primary mb-1 transition-colors"
+                      />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-200">
                         Mặt sau CCCD
                       </span>
                     </div>
@@ -639,59 +751,55 @@ export default function RegisterPage() {
                 </section>
 
                 <section>
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="h-6 w-1 bg-primary rounded-full"></div>
-                    <h3 className="text-xl font-bold">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="h-5 w-1 bg-primary rounded-full"></div>
+                    <h3 className="text-lg font-bold">
                       3. Mô tả thêm về bằng cấp
                     </h3>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <textarea
-                      className="w-full min-h-[120px] rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm p-4"
-                      placeholder="Hãy cho chúng tôi biết thêm về các chứng chỉ bạn đã đạt được (Ví dụ: IELTS 8.0, Giải nhất HSG Quốc gia,...)"
+                      className="w-full min-h-[80px] rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm p-3"
+                      placeholder="Các chứng chỉ bạn đã đạt được (VD: IELTS 8.0,...)"
                     ></textarea>
-                    <p className="text-xs text-slate-400 text-right">
-                      0 / 500 ký tự
-                    </p>
                   </div>
                 </section>
 
-                <div className="flex items-center justify-between pt-8 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center justify-between pt-6 border-t border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={handleBack}
-                    className="flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm"
                   >
-                    <span className="material-symbols-outlined">
-                      arrow_back
-                    </span>
+                    <ArrowLeft
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-400 group-hover:text-primary mb-1 transition-colors"
+                    />
                     Quay lại
                   </button>
-                  <div className="flex gap-4">
+                  <div className="flex gap-3">
                     <button
-                      className="px-6 py-3 rounded-xl text-slate-500 font-bold hover:text-slate-700"
+                      className="px-5 py-2.5 rounded-lg text-slate-500 font-bold hover:text-slate-700 text-sm"
                       type="button"
                     >
                       Lưu nháp
                     </button>
                     <button
                       type="submit"
-                      className="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/25 hover:opacity-90 transition-all"
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white font-bold shadow-lg shadow-primary/25 hover:opacity-90 transition-all text-sm"
                     >
                       Tiếp tục
-                      <span className="material-symbols-outlined">
-                        arrow_forward
-                      </span>
+                      <ArrowRight
+                        size={24}
+                        strokeWidth={2}
+                        className="text-slate-400 group-hover:text-primary mb-1 transition-colors"
+                      />
                     </button>
                   </div>
                 </div>
               </form>
             </div>
-            <footer className="p-10 text-center">
-              <p className="text-xs text-slate-400">
-                © 2024 NEDU Education Technology. Bản quyền thuộc về NEDU.
-              </p>
-            </footer>
           </main>
         </div>
       </div>
@@ -702,36 +810,47 @@ export default function RegisterPage() {
   if (step === 4 && isTutor) {
     return (
       <div className="relative flex h-auto min-h-screen w-full flex-col font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 overflow-x-hidden">
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 md:px-10 py-4 sticky top-0 z-50">
-          <Link to="/" className="flex items-center gap-4 text-primary">
-            <div className="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
-              <span className="material-symbols-outlined text-primary">
-                school
-              </span>
+        <header className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3 sticky top-0 z-50">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white">
+              <GraduationCap
+                size={32}
+                strokeWidth={2}
+                className="text-white transition-all hover:scale-110"
+              />
             </div>
-            <h2 className="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">
-              NEDU
-            </h2>
+            <div>
+              <h2 className="text-blue-600 font-bold leading-tight tracking-tight">
+                NEDU
+              </h2>
+              <p className="text-xs text-slate-500 font-medium">
+                Cổng thông tin gia sư
+              </p>
+            </div>
           </Link>
-          <div className="flex gap-3">
-            <button className="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors">
-              <span className="material-symbols-outlined">notifications</span>
+          <div className="flex items-center gap-4">
+            <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors">
+              <Bell size={20} strokeWidth={2} className="text-slate-500" />
             </button>
-            <button className="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition-colors">
-              <span className="material-symbols-outlined">account_circle</span>
+            <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1"></div>
+            <button className="flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-slate-800 px-3 py-1.5 hover:bg-slate-200 transition-colors">
+              <div className="h-7 w-7 rounded-full bg-primary/20 flex items-center justify-center">
+                <User size={20} strokeWidth={2} className="text-primary" />
+              </div>
+              <span className="text-sm font-semibold">Tài khoản</span>
             </button>
           </div>
         </header>
 
-        <main className="flex-1 flex flex-col items-center py-8 px-4 max-w-4xl mx-auto w-full">
-          <div className="w-full mb-8">
-            <div className="flex gap-6 justify-between items-end mb-2">
-              <p className="text-slate-900 dark:text-slate-100 text-base font-semibold">
+        <main className="flex-1 flex flex-col items-center justify-center py-6 px-4 max-w-4xl mx-auto w-full">
+          <div className="w-full mb-6">
+            <div className="flex gap-4 justify-between items-end mb-1">
+              <p className="text-slate-900 dark:text-slate-100 text-sm font-semibold">
                 Bước 4 của 4
               </p>
-              <p className="text-primary text-sm font-bold">Hoàn tất 100%</p>
+              <p className="text-primary text-xs font-bold">Hoàn tất 100%</p>
             </div>
-            <div className="h-2.5 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
               <div
                 className="h-full rounded-full bg-primary"
                 style={{ width: "100%" }}
@@ -739,131 +858,122 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <div className="w-full flex flex-col items-center text-center space-y-6 mb-12">
-            <div className="relative flex items-center justify-center w-48 h-48 md:w-64 md:h-64 mb-4">
+          <div className="w-full flex flex-col items-center text-center space-y-4 mb-8">
+            <div className="relative flex items-center justify-center w-32 h-32 md:w-40 md:h-40 mb-2">
               <div className="absolute inset-0 bg-primary/5 rounded-full animate-pulse"></div>
-              <div className="z-10 bg-white dark:bg-slate-800 p-8 rounded-full shadow-xl shadow-primary/10 border-4 border-primary/20">
-                <span className="material-symbols-outlined text-primary !text-7xl md:!text-8xl">
-                  task_alt
-                </span>
+              <div className="z-10 bg-white dark:bg-slate-800 p-6 rounded-full shadow-xl shadow-primary/10 border-4 border-primary/20">
+                <CircleCheck
+                  strokeWidth={1.5}
+                  className="text-primary w-[48px] h-[48px] md:w-[60px] md:h-[60px] transition-all duration-500 animate-in zoom-in"
+                />
               </div>
             </div>
             <div>
-              <h1 className="text-slate-900 dark:text-white tracking-tight text-3xl md:text-4xl font-extrabold leading-tight mb-3">
+              <h1 className="text-slate-900 dark:text-white tracking-tight text-2xl md:text-3xl font-extrabold leading-tight mb-2">
                 Cảm ơn bạn đã nộp hồ sơ!
               </h1>
-              <p className="text-slate-600 dark:text-slate-400 text-lg max-w-lg mx-auto">
-                Hồ sơ của bạn đã được ghi nhận thành công. Đội ngũ tuyển sinh
-                NEDU sẽ bắt đầu quy trình đánh giá ngay bây giờ.
+              <p className="text-slate-600 dark:text-slate-400 text-sm max-w-lg mx-auto">
+                Hồ sơ đã được ghi nhận. Đội ngũ NEDU sẽ đánh giá sớm nhất.
               </p>
             </div>
           </div>
 
-          <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-xl p-6 md:p-8 shadow-sm border border-slate-200 dark:border-slate-800 mb-8">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">
-                analytics
-              </span>
+          <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-xl p-5 md:p-6 shadow-sm border border-slate-200 dark:border-slate-800 mb-6">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <TrendingUp
+                size={20}
+                strokeWidth={2}
+                className="text-primary transition-transform hover:scale-110"
+              />
               Trạng thái hồ sơ
             </h3>
-            <div className="relative space-y-8">
-              <div className="absolute left-4 top-1 bottom-1 w-0.5 bg-slate-200 dark:bg-slate-800"></div>
-              <div className="relative flex items-center gap-6 group">
-                <div className="z-10 flex size-8 items-center justify-center rounded-full bg-green-500 text-white shadow-lg">
-                  <span className="material-symbols-outlined !text-sm">
-                    check
-                  </span>
+            <div className="relative space-y-5">
+              <div className="absolute left-3.5 top-1 bottom-1 w-[2px] bg-slate-200 dark:bg-slate-800"></div>
+              <div className="relative flex items-center gap-4 group">
+                <div className="z-10 flex size-7 items-center justify-center rounded-full bg-green-500 text-white shadow-lg">
+                  <Check size={14} strokeWidth={3} className="text-current" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-slate-900 dark:text-white">
+                  <p className="font-bold text-sm text-slate-900 dark:text-white">
                     Hồ sơ đã nộp
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-xs text-slate-500">
                     Đã nhận lúc 14:30, Hôm nay
                   </p>
                 </div>
               </div>
-              <div className="relative flex items-center gap-6 group">
-                <div className="z-10 flex size-8 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 outline outline-4 outline-primary/10">
-                  <span className="material-symbols-outlined !text-sm">
-                    hourglass_empty
-                  </span>
+              <div className="relative flex items-center gap-4 group">
+                <div className="z-10 flex size-7 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 outline outline-4 outline-primary/10">
+                  <Hourglass
+                    size={14}
+                    strokeWidth={3}
+                    className="text-current"
+                  />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-primary">Admin đang xem xét</p>
-                  <p className="text-sm text-slate-500">
-                    Dự kiến hoàn thành trong 3-5 ngày làm việc
+                  <p className="font-bold text-sm text-primary">
+                    Admin đang xem
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Dự kiến trong 3-5 ngày làm việc
                   </p>
                 </div>
               </div>
-              <div className="relative flex items-center gap-6 group">
-                <div className="z-10 flex size-8 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-slate-400">
-                  <span className="material-symbols-outlined !text-sm">
-                    flag
-                  </span>
+              <div className="relative flex items-center gap-4 group">
+                <div className="z-10 flex size-7 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 text-slate-400">
+                  <Flag size={14} strokeWidth={3} className="text-current" />
                 </div>
                 <div className="flex-1 opacity-50">
-                  <p className="font-bold text-slate-500 dark:text-slate-400">
+                  <p className="font-bold text-sm text-slate-500 dark:text-slate-400">
                     Kết quả
                   </p>
-                  <p className="text-sm">Thông báo qua email và ứng dụng</p>
+                  <p className="text-xs">Thông báo qua email</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="w-full max-w-2xl bg-primary/5 rounded-xl p-6 border border-primary/10 mb-10">
-            <h3 className="text-slate-900 dark:text-white font-bold mb-4 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">
-                info
-              </span>
+          <div className="w-full max-w-2xl bg-primary/5 rounded-xl p-4 md:p-5 border border-primary/10 mb-6">
+            <h3 className="text-slate-900 dark:text-white text-sm font-bold mb-3 flex items-center gap-2">
+              <Info size={20} strokeWidth={3} className="text-primary" />
               Tiếp theo là gì?
             </h3>
-            <ul className="space-y-3 text-slate-600 dark:text-slate-400 text-sm">
-              <li className="flex gap-3">
-                <span className="material-symbols-outlined text-primary !text-lg">
-                  mail
-                </span>
-                <span>
-                  Kiểm tra hòm thư Email để nhận bản sao hồ sơ đã gửi.
-                </span>
+            <ul className="space-y-2 text-slate-600 dark:text-slate-400 text-xs">
+              <li className="flex gap-2 items-center">
+                <Mail size={20} strokeWidth={3} className="text-primary" />
+                <span>Kiểm tra email để nhận bản sao hồ sơ.</span>
               </li>
-              <li className="flex gap-3">
-                <span className="material-symbols-outlined text-primary !text-lg">
-                  support_agent
-                </span>
-                <span>
-                  Nếu có bất kỳ thay đổi nào, vui lòng liên hệ bộ phận hỗ trợ
-                  trong vòng 24h.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <span className="material-symbols-outlined text-primary !text-lg">
-                  calendar_month
-                </span>
-                <span>
-                  Theo dõi mục "Hồ sơ của tôi" để cập nhật tiến độ xét tuyển.
-                </span>
+              <li className="flex gap-2 items-center">
+                <Headset
+                  size={16}
+                  strokeWidth={2}
+                  className="text-primary transition-colors hover:text-primary-dark"
+                />
+                <span>Liên hệ hỗ trợ trong vòng 24h nếu có sai sót.</span>
               </li>
             </ul>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
+          <div className="flex gap-4 w-full max-w-2xl">
             <button
               onClick={() => navigate("/")}
-              className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold h-14 rounded-xl transition-all shadow-lg shadow-primary/20"
+              className="flex-1 flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold h-12 rounded-xl transition-all shadow-lg shadow-primary/20 text-sm"
             >
-              <span className="material-symbols-outlined">home</span>
+              <Home size={18} strokeWidth={3} className="text-white" />
               Về trang chủ
             </button>
-            <button className="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold h-14 rounded-xl transition-all">
-              <span className="material-symbols-outlined">description</span>
+            <button className="flex-1 flex items-center justify-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold h-12 rounded-xl transition-all text-sm">
+              <FileText
+                size={18}
+                strokeWidth={3}
+                className="text-slate-700 dark:text-slate-200"
+              />
               Xem hồ sơ đã nộp
             </button>
           </div>
 
           <footer className="mt-12 text-slate-400 text-sm flex items-center gap-2 pb-10">
-            <span className="material-symbols-outlined !text-base">lock</span>
+            <Lock size={18} strokeWidth={3} className="text-slate-400" />
             Thông tin của bạn được bảo mật theo tiêu chuẩn NEDU Security
           </footer>
         </main>

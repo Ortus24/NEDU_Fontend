@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Logo from "../../../shared/components/Logo";
+import { Mail, MapPin, Phone, Trophy } from "lucide-react";
 
 export function UserFooter() {
   return (
@@ -9,9 +11,7 @@ export function UserFooter() {
           {/* Brand & Description */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-primary opacity-90">
-              <span className="material-symbols-outlined text-3xl font-bold">
-                school
-              </span>
+              <Logo />
               <h1 className="text-xl font-bold tracking-tight">NEDU</h1>
             </div>
             <p className="text-slate-500 text-sm leading-relaxed">
@@ -20,12 +20,18 @@ export function UserFooter() {
             </p>
             <div className="flex gap-4 pt-2">
               <span className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-primary cursor-pointer transition-colors shadow-sm">
-                <span className="material-symbols-outlined">
-                  social_leaderboard
-                </span>
+                <Trophy
+                  size={24}
+                  strokeWidth={2}
+                  className="text-yellow-600 dark:text-yellow-500 transition-transform hover:rotate-12"
+                />
               </span>
               <span className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-primary cursor-pointer transition-colors shadow-sm">
-                <span className="material-symbols-outlined">mail</span>
+                <Mail
+                  size={24}
+                  strokeWidth={2}
+                  className="text-blue-600 dark:text-blue-500 transition-transform hover:rotate-12"
+                />
               </span>
             </div>
           </div>
@@ -103,21 +109,27 @@ export function UserFooter() {
             </h4>
             <ul className="space-y-3 text-sm text-slate-500 font-medium">
               <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-slate-400">
-                  mail
-                </span>{" "}
+                <Mail
+                  size={24}
+                  strokeWidth={2}
+                  className="text-blue-600 dark:text-blue-500 transition-transform hover:rotate-12"
+                />{" "}
                 contact@nedu.vn
               </li>
               <li className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-slate-400">
-                  call
-                </span>{" "}
+                <Phone
+                  size={24}
+                  strokeWidth={2}
+                  className="text-blue-600 dark:text-blue-500 transition-transform hover:rotate-12"
+                />{" "}
                 1900 1234
               </li>
               <li className="flex items-start gap-3 mt-2 text-xs leading-relaxed">
-                <span className="material-symbols-outlined text-slate-400">
-                  location_on
-                </span>{" "}
+                <MapPin
+                  size={36}
+                  strokeWidth={2}
+                  className="text-blue-600 dark:text-blue-500 transition-transform hover:rotate-12"
+                />{" "}
                 ĐH FPT, Khu Công Nghệ Cao Hòa Lạc, Thạch Thất, TP. Hà Nội
               </li>
             </ul>
