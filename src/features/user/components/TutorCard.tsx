@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Tutor } from "../data/tutors";
-import { Star } from "lucide-react";
+import { Check, Star } from "lucide-react";
 
 interface TutorCardProps {
   tutor: Tutor;
@@ -18,9 +18,11 @@ export function TutorCard({ tutor }: TutorCardProps) {
             alt={tutor.name}
           />
           <div className="absolute -bottom-1 -right-1 bg-green-500 text-white rounded-full flex items-center justify-center p-0.5 border-2 border-white dark:border-background-dark">
-            <span className="material-symbols-outlined text-[12px] font-bold">
-              check
-            </span>
+            <Check
+              size={12}
+              strokeWidth={3.5} // Tăng lên 3 hoặc 3.5 để có hiệu ứng "font-bold" rõ nét ở kích thước nhỏ
+              className="text-current"
+            />
           </div>
         </div>
         <div className="flex items-center gap-1 bg-orange-50 dark:bg-orange-950/30 px-2 py-1 rounded-lg">
