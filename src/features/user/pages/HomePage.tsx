@@ -1,4 +1,10 @@
-import { CalendarCheck, ChartLine, ShieldCheck, Star } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarCheck,
+  ChartLine,
+  ShieldCheck,
+  Star,
+} from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -223,7 +229,11 @@ function HomePage() {
               </div>
               <button className="text-primary font-bold flex items-center gap-2 hover:underline">
                 Xem tất cả{" "}
-                <span className="material-symbols-outlined">arrow_forward</span>
+                <ArrowRight
+                  size={24}
+                  strokeWidth={2}
+                  className="text-primary transition-transform hover:translate-x-1"
+                />
               </button>
             </div>
 

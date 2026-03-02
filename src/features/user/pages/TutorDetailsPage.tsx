@@ -1,3 +1,19 @@
+import {
+  ArrowRight,
+  Award,
+  CalendarCheck,
+  CalendarDays,
+  Download,
+  FileText,
+  GraduationCap,
+  MessageCircle,
+  PencilLine,
+  Play,
+  ShieldCheck,
+  Star,
+  User,
+  Zap,
+} from "lucide-react";
 import React from "react";
 import { useParams } from "react-router-dom";
 
@@ -23,9 +39,11 @@ function TutorDetailsPage() {
                     className="absolute bottom-1 right-1 bg-green-500 text-white rounded-full p-1 shadow-md border-2 border-white dark:border-slate-800 flex items-center justify-center"
                     title="eKYC Verified"
                   >
-                    <span className="material-symbols-outlined text-sm font-bold">
-                      verified
-                    </span>
+                    <ShieldCheck
+                      size={24}
+                      strokeWidth={2}
+                      className="text-white"
+                    />
                   </div>
                 </div>
                 <div className="flex-1 pt-2">
@@ -51,9 +69,12 @@ function TutorDetailsPage() {
                   </div>
                   <div className="flex items-center gap-4 text-sm font-medium">
                     <div className="flex items-center gap-1 text-amber-500">
-                      <span className="material-symbols-outlined fill-1">
-                        star
-                      </span>
+                      <Star
+                        size={24}
+                        strokeWidth={2}
+                        fill="currentColor" // Đổ đầy màu sắc để thay thế cho fill-1
+                        className="text-yellow-400 transition-transform hover:scale-110 cursor-pointer"
+                      />
                       <span className="text-slate-900 dark:text-slate-100 text-lg">
                         4.9
                       </span>
@@ -79,9 +100,12 @@ function TutorDetailsPage() {
               />
               <div className="absolute inset-0 flex items-center justify-center">
                 <button className="size-20 rounded-full bg-primary text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform">
-                  <span className="material-symbols-outlined text-4xl fill-1">
-                    play_arrow
-                  </span>
+                  <Play
+                    size={36} // Tương đương text-4xl
+                    strokeWidth={2}
+                    fill="currentColor" // Thay thế cho fill-1 để icon đổ màu đặc bên trong
+                    className="text-white transition-transform hover:scale-110 active:scale-95"
+                  />
                 </button>
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
@@ -112,9 +136,11 @@ function TutorDetailsPage() {
             <div className="space-y-10">
               <div className="space-y-4">
                 <h3 className="text-xl font-bold flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">
-                    person
-                  </span>
+                  <User
+                    size={24} // Kích thước mặc định tương đương icon font
+                    strokeWidth={2}
+                    className="text-primary transition-all duration-200 hover:scale-110"
+                  />
                   Về tôi
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -130,17 +156,21 @@ function TutorDetailsPage() {
 
               <div className="space-y-4">
                 <h3 className="text-xl font-bold flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">
-                    workspace_premium
-                  </span>
+                  <Award
+                    size={24}
+                    strokeWidth={2}
+                    className="text-primary transition-all duration-300 hover:rotate-12 hover:scale-110"
+                  />
                   Bằng cấp &amp; Chứng chỉ
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     <div className="size-12 rounded-lg bg-red-50 dark:bg-red-950 flex items-center justify-center text-red-600">
-                      <span className="material-symbols-outlined">
-                        picture_as_pdf
-                      </span>
+                      <FileText
+                        size={24}
+                        strokeWidth={2}
+                        className="text-red-600 dark:text-red-500 transition-transform hover:scale-110"
+                      />
                     </div>
                     <div className="flex-1">
                       <p className="font-bold text-sm">
@@ -150,13 +180,19 @@ function TutorDetailsPage() {
                         Chứng chỉ quốc tế
                       </p>
                     </div>
-                    <span className="material-symbols-outlined text-slate-400">
-                      download
-                    </span>
+                    <Download
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-400 transition-all hover:text-primary hover:translate-y-0.5"
+                    />
                   </div>
                   <div className="flex items-center gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     <div className="size-12 rounded-lg bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-600">
-                      <span className="material-symbols-outlined">school</span>
+                      <GraduationCap
+                        size={24}
+                        strokeWidth={2}
+                        className="text-slate-700 dark:text-slate-300 transition-colors"
+                      />
                     </div>
                     <div className="flex-1">
                       <p className="font-bold text-sm">
@@ -166,18 +202,22 @@ function TutorDetailsPage() {
                         ĐH Ngoại Ngữ - ĐHQG HN
                       </p>
                     </div>
-                    <span className="material-symbols-outlined text-slate-400">
-                      download
-                    </span>
+                    <Download
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-400 transition-all hover:text-primary hover:translate-y-0.5"
+                    />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <h3 className="text-xl font-bold flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">
-                    history_edu
-                  </span>
+                  <PencilLine
+                    size={24}
+                    strokeWidth={2}
+                    className="text-primary transition-transform hover:rotate-12"
+                  />
                   Kinh nghiệm giảng dạy
                 </h3>
                 <div className="relative pl-8 border-l-2 border-slate-100 dark:border-slate-800 space-y-8">
@@ -235,25 +275,31 @@ function TutorDetailsPage() {
                 </div>
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-3 text-sm">
-                    <span className="material-symbols-outlined text-slate-400">
-                      bolt
-                    </span>
+                    <Zap
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-400 transition-colors hover:text-yellow-500 fill-transparent hover:fill-yellow-500"
+                    />
                     <span className="text-slate-700 dark:text-slate-300">
                       Phản hồi trong 15 phút
                     </span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <span className="material-symbols-outlined text-slate-400">
-                      event_available
-                    </span>
+                    <CalendarCheck
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-400 transition-colors hover:text-green-500"
+                    />
                     <span className="text-slate-700 dark:text-slate-300">
                       Có 12 lịch trống trong tuần này
                     </span>
                   </div>
                   <div className="flex items-center gap-3 text-sm">
-                    <span className="material-symbols-outlined text-slate-400">
-                      verified_user
-                    </span>
+                    <ShieldCheck
+                      size={24} // Kích thước mặc định của Material Symbols
+                      strokeWidth={2}
+                      className="text-slate-400"
+                    />
                     <span className="text-slate-700 dark:text-slate-300">
                       Thanh toán an toàn qua NEDU
                     </span>
@@ -261,15 +307,19 @@ function TutorDetailsPage() {
                 </div>
                 <div className="space-y-3">
                   <button className="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2">
-                    <span className="material-symbols-outlined">
-                      calendar_month
-                    </span>
+                    <CalendarDays
+                      size={24}
+                      strokeWidth={2}
+                      className="text-white dark:text-slate-400 transition-colors hover:text-primary"
+                    />
                     Đặt học thử ngay
                   </button>
                   <button className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
-                    <span className="material-symbols-outlined">
-                      chat_bubble
-                    </span>
+                    <MessageCircle
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-600 dark:text-slate-400 transition-transform hover:scale-110 cursor-pointer"
+                    />
                     Nhắn tin
                   </button>
                 </div>
@@ -304,7 +354,11 @@ function TutorDetailsPage() {
             <h3 className="text-2xl font-bold">Lộ trình mẫu của Minh</h3>
             <button className="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
               Xem tất cả{" "}
-              <span className="material-symbols-outlined">arrow_forward</span>
+              <ArrowRight
+                size={20}
+                strokeWidth={3} // Tăng lên 3 hoặc 3.5 để có hiệu ứng "font-bold" rõ nét ở kích thước nhỏ
+                className="text-current"
+              />
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -340,9 +394,11 @@ function TutorDetailsPage() {
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                   <div className="font-bold text-primary">4.500.000₫</div>
                   <button className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-sm">
-                      arrow_forward
-                    </span>
+                    <ArrowRight
+                      size={16} // Tương đương text-sm
+                      strokeWidth={2}
+                      className="transition-transform group-hover:translate-x-1"
+                    />
                   </button>
                 </div>
               </div>
@@ -377,9 +433,11 @@ function TutorDetailsPage() {
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                   <div className="font-bold text-primary">2.800.000₫</div>
                   <button className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-sm">
-                      arrow_forward
-                    </span>
+                    <Download
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-400 transition-all hover:text-primary hover:translate-y-0.5"
+                    />
                   </button>
                 </div>
               </div>
@@ -414,9 +472,11 @@ function TutorDetailsPage() {
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
                   <div className="font-bold text-primary">1.600.000₫</div>
                   <button className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-sm">
-                      arrow_forward
-                    </span>
+                    <Download
+                      size={24}
+                      strokeWidth={2}
+                      className="text-slate-400 transition-all hover:text-primary hover:translate-y-0.5"
+                    />
                   </button>
                 </div>
               </div>
