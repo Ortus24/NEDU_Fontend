@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Tutor } from "../data/tutors";
-import { Check, Star } from "lucide-react";
+import { Check, MapPin, Star } from "lucide-react";
 
 interface TutorCardProps {
   tutor: Tutor;
@@ -43,7 +43,11 @@ export function TutorCard({ tutor }: TutorCardProps) {
         {tutor.name}
       </h3>
       <p className="text-xs font-medium text-slate-500 mb-3 flex items-center gap-1">
-        <span className="material-symbols-outlined text-sm">location_on</span>{" "}
+        <MapPin
+          size={14} // Tương đương text-sm
+          strokeWidth={2}
+          className="text-slate-500 transition-colors hover:text-primary"
+        />{" "}
         {tutor.location}
       </p>
       <div className="flex flex-wrap gap-2 mb-4">
