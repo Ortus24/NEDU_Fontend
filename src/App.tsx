@@ -3,6 +3,11 @@ import LoginPage from "./features/auth/pages/LoginPage";
 import HomePage from "./features/user/pages/HomePage";
 import TutorPage from "./features/user/pages/TutorPage";
 import TutorDetailsPage from "./features/user/pages/TutorDetailsPage";
+import StudentProfilePage from "./features/student_modules/StudentProfilePage";
+import CoursePage from "./features/student_modules/CoursePage";
+import StudentLearningProgressPage from "./features/student_modules/StudentLearningProgressPage";
+import StudentBillingPage from "./features/student_modules/StudentBillingPage";
+import StudentPortalLayout from "./features/student_modules/layouts/StudentPortalLayout";
 import "./App.css";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import UserLayout from "./features/user/layouts/UserLayout";
@@ -20,6 +25,14 @@ function App() {
 
           {/* Đường dẫn chi tiết gia sư */}
           <Route path="/tutor/:id" element={<TutorDetailsPage />} />
+        </Route>
+
+        {/* Nhóm các trang Student Portal sử dụng chung Layout */}
+        <Route element={<StudentPortalLayout />}>
+          <Route path="/profile" element={<StudentProfilePage />} />
+          <Route path="/learning-progress" element={<StudentLearningProgressPage />} />
+          <Route path="/progress" element={<CoursePage />} />
+          <Route path="/billing" element={<StudentBillingPage />} />
         </Route>
 
         {/* Đường dẫn localhost:5173/login */}

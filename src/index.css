@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,9 +7,10 @@
 :root {
   line-height: 1.5;
   font-weight: 400;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Quan trọng: Reset toàn bộ margin/padding của body và html */
+/* Reset toàn bộ margin/padding */
 html,
 body,
 #root {
@@ -19,5 +22,9 @@ body,
 }
 
 body {
-  display: block; /* Xóa place-items: center nếu có */
+  display: block;
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc; /* Màu nền Slate-50 đồng bộ */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
