@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Clock, DollarSign, Users, BookOpen, RefreshCw, CheckCircle } from "lucide-react";
-import { mockDisputes } from "../../api";
+import { mockDisputes } from "../api";
 import type { DisputeOutcome } from "../../types";
 import PageHeader from "../components/shared/PageHeader";
 import StatusBadge from "../components/shared/StatusBadge";

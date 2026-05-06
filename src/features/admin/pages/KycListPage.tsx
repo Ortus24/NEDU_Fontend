@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ShieldCheck, Clock, CheckCircle, XCircle } from "lucide-react";
-import { mockTutors } from "../../api";
+import { mockTutors } from "../api";
 import type { Tutor } from "../../types";
 import PageHeader from "../components/shared/PageHeader";
 import { SummaryCard, EmptyState, SearchInput } from "../components/shared/ui";

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Users, Activity, Ban, UserPlus, Download, Eye, ShieldOff, Shield } from "lucide-react";
-import { mockStudents } from "../../api";
+import { mockStudents } from "../api";
 import type { Student } from "../../types";
 import PageHeader from "../components/shared/PageHeader";
 import { SearchInput, SummaryCard, EmptyState, Pagination } from "../components/shared/ui";

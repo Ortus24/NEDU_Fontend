@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageSquareWarning, Clock, CheckCircle, XCircle, ChevronRight, DollarSign } from "lucide-react";
-import { mockDisputes } from "../../api";
+import { mockDisputes } from "../api";
 import type { Dispute } from "../../types";
 import PageHeader from "../components/shared/PageHeader";
 import { SearchInput, SummaryCard, EmptyState } from "../components/shared/ui";

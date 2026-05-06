@@ -5,7 +5,7 @@ import {
   PlayCircle, Phone, Mail, MapPin, BookOpen, DollarSign,
   CreditCard, History,
 } from "lucide-react";
-import { mockTutors } from "../../api";
+import { mockTutors } from "../api";
 import StatusBadge from "../components/shared/StatusBadge";
 import PageHeader from "../components/shared/PageHeader";
 import { useToast } from "../components/shared/Toast";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Wallet, Lock, Send, Settings2, CheckCircle } from "lucide-react";
-import { mockEscrowTransactions, mockPayoutRequests } from "../../api";
+import { mockEscrowTransactions, mockPayoutRequests } from "../api";
 import type { EscrowTransaction, PayoutRequest, PlatformSettings } from "../../types";
 import PageHeader from "../components/shared/PageHeader";
 import { SummaryCard, EmptyState } from "../components/shared/ui";

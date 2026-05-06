@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { GraduationCap, CheckCircle, Clock, XCircle, Download } from "lucide-react";
-import { mockTutors } from "../../api";
+import { mockTutors } from "../api";
 import type { Tutor, TutorStatus } from "../../types";
 import PageHeader from "../components/shared/PageHeader";
 import { SearchInput, SummaryCard } from "../components/shared/ui";
