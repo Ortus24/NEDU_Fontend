@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   Pencil,
   Camera,
@@ -37,19 +38,68 @@ export default function StudentProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
 
   // Form States
-  const [fullName, setFullName] = useState("Nguyễn Thành An");
-  const [phone, setPhone] = useState("0987 654 321");
-  const [address, setAddress] = useState("123 Đường ABC, Quận 1, TP. HCM");
-  const [dob, setDob] = useState("2006-05-20");
-  const [grade, setGrade] = useState("Lớp 12");
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [dob, setDob] = useState("");
+  const [grade, setGrade] = useState("");
   const [learningStyle, setLearningStyle] = useState<"online" | "offline" | "hybrid">("online");
-  const [parentName, setParentName] = useState("Nguyễn Văn B");
-  const [parentPhone, setParentPhone] = useState("0912 345 678");
-  const [goal, setGoal] = useState("Đạt IELTS 7.5 và đỗ vào trường Đại học mơ ước.");
-  const [subjects, setSubjects] = useState([
-    { id: 1, name: "Toán học" },
-    { id: 2, name: "Tiếng Anh" },
-  ]);
+  const [parentName, setParentName] = useState("");
+  const [parentPhone, setParentPhone] = useState("");
+  const [goal, setGoal] = useState("");
+  const [subjects, setSubjects] = useState<{ id: string, name: string }[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<{ id: string, category: string }[]>([]);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { userId } = useParams();
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/v1/students/category-subjects");
+        if (res.ok) {
+          const json = await res.json();
+          if (json.data && json.data.subjects) {
+            setAvailableCategories(json.data.subjects);
+          }
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải danh sách môn học:", err);
+      }
+    };
+    fetchCategories();
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/v1/students/profile/${userId}`);
+        if (res.ok) {
+          const json = await res.json();
+          const data = json.data;
+
+          if (data.fullName) setFullName(data.fullName);
+          if (data.phone) setPhone(data.phone);
+          if (data.address) setAddress(data.address);
+          if (data.dob) setDob(data.dob);
+          if (data.gradeLevel) setGrade(data.gradeLevel);
+          if (data.learningStyle) setLearningStyle(data.learningStyle.toLowerCase());
+          if (data.parentName) setParentName(data.parentName);
+          if (data.parentPhone) setParentPhone(data.parentPhone);
+          if (data.learningGoals) setGoal(data.learningGoals);
+
+          // API giờ đã trả về danh sách SubjectResponse bao gồm id và category.
+          if (data.subjectsOfInterest) {
+            setSubjects(data.subjectsOfInterest.map((subject: any) => ({ id: subject.id, name: subject.category })));
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải hồ sơ:", error);
+      }
+    };
+    fetchProfile();
+  }, [userId]);
 
   const [snapshot, setSnapshot] = useState<any>(null);
 
@@ -77,18 +127,73 @@ export default function StudentProfilePage() {
     setSnapshot(null);
   };
 
-  const removeSubject = (id: number) => {
+  const removeSubject = (id: string) => {
     if (editingSection !== "learning") return;
     setSubjects((prev) => prev.filter((s) => s.id !== id));
   };
 
-  const handleSave = () => {
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    const phoneRegex = /^[0-9]{10}$/;
+
+    if (editingSection === "general") {
+      if (!fullName.trim()) newErrors.fullName = "Họ và tên không được để trống";
+      if (phone && !phoneRegex.test(phone)) newErrors.phone = "Số điện thoại phải có 10 chữ số";
+    }
+
+    if (editingSection === "learning") {
+      if (!dob) newErrors.dob = "Ngày sinh không được để trống";
+      if (!grade) newErrors.grade = "Vui lòng chọn khối lớp";
+      if (parentPhone && !phoneRegex.test(parentPhone)) newErrors.parentPhone = "SĐT phụ huynh phải có 10 chữ số";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = async () => {
+    if (!validate()) return;
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
+      if (!userId) {
+        alert("Không tìm thấy ID người dùng!");
+        return;
+      }
+      const payload = {
+        fullName,
+        phone,
+        address,
+        dob,
+        gradeLevel: grade,
+        learningStyle: learningStyle.toUpperCase(),
+        parentName,
+        parentPhone,
+        learningGoals: goal,
+        subjectsOfInterest: subjects.map(s => s.id)
+      };
+
+      const res = await fetch(`http://localhost:8080/api/v1/students/profile/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          // "Authorization": `Bearer ${token}` // TODO: Thêm token auth nếu có
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        throw new Error("Lỗi khi lưu thông tin");
+      }
+
       setEditingSection(null);
       setSnapshot(null);
-    }, 1500);
+      alert("Cập nhật hồ sơ thành công!");
+    } catch (error) {
+      console.error(error);
+      alert("Cập nhật thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const inputClass = "w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none";
@@ -141,10 +246,12 @@ export default function StudentProfilePage() {
 
             <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-5">
               <FormField label="Họ và tên" required>
-                <input className={editingSection === "general" ? inputClass : disabledInputClass} type="text" value={fullName} readOnly={editingSection !== "general"} onChange={(e) => setFullName(e.target.value)} />
+                <input className={editingSection === "general" ? (errors.fullName ? `${inputClass} border-rose-500` : inputClass) : disabledInputClass} type="text" value={fullName} readOnly={editingSection !== "general"} onChange={(e) => setFullName(e.target.value)} />
+                {errors.fullName && <span className="text-[10px] text-rose-500 font-medium">{errors.fullName}</span>}
               </FormField>
               <FormField label="Số điện thoại">
-                <input className={editingSection === "general" ? inputClass : disabledInputClass} type="tel" value={phone} readOnly={editingSection !== "general"} onChange={(e) => setPhone(e.target.value)} />
+                <input className={editingSection === "general" ? (errors.phone ? `${inputClass} border-rose-500` : inputClass) : disabledInputClass} type="tel" value={phone} readOnly={editingSection !== "general"} onChange={(e) => setPhone(e.target.value)} />
+                {errors.phone && <span className="text-[10px] text-rose-500 font-medium">{errors.phone}</span>}
               </FormField>
               <FormField label="Email" disabled colSpan>
                 <input className={disabledInputClass} type="email" value="an.nguyen@nedu.edu.vn" disabled />
@@ -172,15 +279,22 @@ export default function StudentProfilePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <FormField label="Ngày sinh">
-              <input className={editingSection === "learning" ? inputClass : disabledInputClass} type="date" value={dob} readOnly={editingSection !== "learning"} onChange={(e) => setDob(e.target.value)} />
+              <input className={editingSection === "learning" ? (errors.dob ? `${inputClass} border-rose-500` : inputClass) : disabledInputClass} type="date" value={dob} readOnly={editingSection !== "learning"} onChange={(e) => setDob(e.target.value)} />
+              {errors.dob && <span className="text-[10px] text-rose-500 font-medium">{errors.dob}</span>}
             </FormField>
             <FormField label="Khối lớp / Trình độ">
               <div className="relative">
-                <select className={`${editingSection === "learning" ? inputClass : disabledInputClass} w-full appearance-none pr-10`} value={grade} disabled={editingSection !== "learning"} onChange={(e) => setGrade(e.target.value)}>
-                  <option>Lớp 10</option><option>Lớp 11</option><option>Lớp 12</option><option>Đại học - Năm 1</option>
+                <select className={`${editingSection === "learning" ? (errors.grade ? `${inputClass} border-rose-500` : inputClass) : disabledInputClass} w-full appearance-none pr-10`} value={grade} disabled={editingSection !== "learning"} onChange={(e) => setGrade(e.target.value)}>
+                  <option value="">Chọn khối lớp</option>
+                  {[...Array(12)].map((_, i) => (
+                    <option key={i + 1} value={`Lớp ${i + 1}`}>Lớp {i + 1}</option>
+                  ))}
+                  <option value="Đại học">Đại học</option>
+                  <option value="Khác">Khác</option>
                 </select>
                 <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
+              {errors.grade && <span className="text-[10px] text-rose-500 font-medium">{errors.grade}</span>}
             </FormField>
 
             <div className="md:col-span-2 flex flex-col gap-3">
@@ -201,8 +315,13 @@ export default function StudentProfilePage() {
                 <h4 className="text-xs font-bold uppercase text-slate-600">Thông tin phụ huynh</h4>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input className={editingSection === "learning" ? inputClass : disabledInputClass} placeholder="Họ tên" value={parentName} readOnly={editingSection !== "learning"} onChange={(e) => setParentName(e.target.value)} />
-                <input className={editingSection === "learning" ? inputClass : disabledInputClass} placeholder="SĐT" value={parentPhone} readOnly={editingSection !== "learning"} onChange={(e) => setParentPhone(e.target.value)} />
+                <div className="flex flex-col gap-1">
+                  <input className={editingSection === "learning" ? inputClass : disabledInputClass} placeholder="Họ tên" value={parentName} readOnly={editingSection !== "learning"} onChange={(e) => setParentName(e.target.value)} />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <input className={editingSection === "learning" ? (errors.parentPhone ? `${inputClass} border-rose-500` : inputClass) : disabledInputClass} placeholder="SĐT" value={parentPhone} readOnly={editingSection !== "learning"} onChange={(e) => setParentPhone(e.target.value)} />
+                  {errors.parentPhone && <span className="text-[10px] text-rose-500 font-medium">{errors.parentPhone}</span>}
+                </div>
               </div>
             </div>
 
@@ -214,7 +333,34 @@ export default function StudentProfilePage() {
                     {s.name} {editingSection === "learning" && <X size={12} className="cursor-pointer" onClick={() => removeSubject(s.id)} />}
                   </span>
                 ))}
-                {editingSection === "learning" && <button className="text-xs font-semibold text-slate-400 flex items-center gap-1"><Plus size={14} /> Thêm</button>}
+                {editingSection === "learning" && (
+                  <div className="relative">
+                    <button 
+                      onClick={() => setShowCategoryDropdown(!showCategoryDropdown)}
+                      className="text-xs font-semibold text-slate-400 flex items-center gap-1 bg-white border border-slate-200 px-3 py-1.5 rounded-full hover:bg-slate-50 transition-colors"
+                    >
+                      <Plus size={14} /> Thêm môn học
+                    </button>
+                    {showCategoryDropdown && availableCategories.length > 0 && (
+                      <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-[100] py-1 overflow-hidden">
+                        {availableCategories.map(subject => (
+                          <button
+                            key={subject.id}
+                            className="w-full text-left px-4 py-2 text-sm hover:bg-indigo-50 text-slate-700 transition-colors"
+                            onClick={() => {
+                              if (!subjects.find(s => s.id === subject.id)) {
+                                setSubjects([...subjects, { id: subject.id, name: subject.category }]);
+                              }
+                              setShowCategoryDropdown(false);
+                            }}
+                          >
+                            {subject.category}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

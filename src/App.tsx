@@ -8,6 +8,7 @@ import CoursePage from "./features/student_modules/CoursePage";
 import StudentLearningProgressPage from "./features/student_modules/StudentLearningProgressPage";
 import StudentBillingPage from "./features/student_modules/StudentBillingPage";
 import StudentPortalLayout from "./features/student_modules/layouts/StudentPortalLayout";
+import StudentTutorPage from "./features/student_modules/TutorPage";
 import "./App.css";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import UserLayout from "./features/user/layouts/UserLayout";
@@ -29,9 +30,10 @@ function App() {
 
         {/* Nhóm các trang Student Portal sử dụng chung Layout */}
         <Route element={<StudentPortalLayout />}>
-          <Route path="/profile" element={<StudentProfilePage />} />
+          <Route path="/profile/:userId" element={<StudentProfilePage />} />
           <Route path="/learning-progress" element={<StudentLearningProgressPage />} />
           <Route path="/progress" element={<CoursePage />} />
+          <Route path="/tutor" element={<StudentTutorPage />} />
           <Route path="/billing" element={<StudentBillingPage />} />
         </Route>
 
