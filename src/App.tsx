@@ -7,10 +7,19 @@ import "./App.css";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import UserLayout from "./features/user/layouts/UserLayout";
 
-// Admin imports
+// Admin Layout
 import AdminLayout from "./layouts/AdminLayout";
+
+// Admin Pages
 import DashboardPage from "./features/admin/pages/DashboardPage";
-import PlaceholderPage from "./features/admin/components/PlaceholderPage";
+import TutorManagementPage from "./features/admin/pages/TutorManagementPage";
+import KycListPage from "./features/admin/pages/KycListPage";
+import KycDetailPage from "./features/admin/pages/KycDetailPage";
+import StudentManagementPage from "./features/admin/pages/StudentManagementPage";
+import FinancePage from "./features/admin/pages/FinancePage";
+import DisputeListPage from "./features/admin/pages/DisputeListPage";
+import DisputeDetailPage from "./features/admin/pages/DisputeDetailPage";
+import SettingsPage from "./features/admin/pages/SettingsPage";
 
 function App() {
   return (
@@ -30,92 +39,15 @@ function App() {
 
         {/* ============ ADMIN ROUTES ============ */}
         <Route path="/admin" element={<AdminLayout />}>
-          {/* Dashboard - màn hình mặc định */}
           <Route index element={<DashboardPage />} />
-
-          {/* Quản lý học sinh */}
-          <Route
-            path="students"
-            element={
-              <PlaceholderPage
-                title="Quản lý Học sinh"
-                description="Màn hình danh sách và chi tiết học sinh đang được phát triển."
-              />
-            }
-          />
-
-          {/* Quản lý gia sư */}
-          <Route
-            path="tutors"
-            element={
-              <PlaceholderPage
-                title="Quản lý Gia sư"
-                description="Màn hình danh sách gia sư đang được phát triển."
-              />
-            }
-          />
-
-          {/* Duyệt eKYC */}
-          <Route
-            path="kyc"
-            element={
-              <PlaceholderPage
-                title="Duyệt hồ sơ eKYC"
-                description="Màn hình kiểm duyệt hồ sơ gia sư (CCCD, bằng cấp, video) đang được phát triển."
-              />
-            }
-          />
-          <Route
-            path="kyc/:id"
-            element={
-              <PlaceholderPage
-                title="Chi tiết hồ sơ Gia sư"
-                description="Màn hình xem chi tiết và phân xử hồ sơ gia sư đang được phát triển."
-              />
-            }
-          />
-
-          {/* Tài chính */}
-          <Route
-            path="finance"
-            element={
-              <PlaceholderPage
-                title="Quản lý Tài chính"
-                description="Màn hình Escrow, giải ngân và cấu hình phí nền tảng đang được phát triển."
-              />
-            }
-          />
-
-          {/* Tranh chấp */}
-          <Route
-            path="disputes"
-            element={
-              <PlaceholderPage
-                title="Trung tâm Xử lý Tranh chấp"
-                description="Màn hình tiếp nhận và phân xử ticket khiếu nại đang được phát triển."
-              />
-            }
-          />
-          <Route
-            path="disputes/:id"
-            element={
-              <PlaceholderPage
-                title="Chi tiết Tranh chấp"
-                description="Màn hình xử lý ticket tranh chấp đang được phát triển."
-              />
-            }
-          />
-
-          {/* Cài đặt */}
-          <Route
-            path="settings"
-            element={
-              <PlaceholderPage
-                title="Cài đặt Nền tảng"
-                description="Màn hình cấu hình phí và gói subscription đang được phát triển."
-              />
-            }
-          />
+          <Route path="tutors" element={<TutorManagementPage />} />
+          <Route path="students" element={<StudentManagementPage />} />
+          <Route path="kyc" element={<KycListPage />} />
+          <Route path="kyc/:id" element={<KycDetailPage />} />
+          <Route path="finance" element={<FinancePage />} />
+          <Route path="disputes" element={<DisputeListPage />} />
+          <Route path="disputes/:id" element={<DisputeDetailPage />} />
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
