@@ -22,7 +22,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
 
           {/* Đường dẫn nhánh Tìm gia sư */}
-          <Route path="/tutor" element={<TutorPage />} />
+          {/* <Route path="/tutor" element={<TutorPage />} /> */}
 
           {/* Đường dẫn chi tiết gia sư */}
           <Route path="/tutor/:id" element={<TutorDetailsPage />} />

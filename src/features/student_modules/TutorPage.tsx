@@ -1,17 +1,9 @@
-import React, { useState, useMemo } from "react";
-import { mockTutors } from "../user/data/tutors";
+import React, { useState, useEffect, useCallback } from "react";
+import { Tutor } from "../user/data/tutors";
 import { TutorCard } from "../user/components/TutorCard";
-import { ChevronLeft, ChevronRight, Filter, Search, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, Search, Star, Loader2 } from "lucide-react";
 
-const SUBJECTS = [
-  "Toán học",
-  "Tiếng Anh",
-  "Ngữ văn",
-  "Vật lý",
-  "Hóa học",
-  "Tin học",
-  "Sinh học",
-];
+
 
 function TutorPage() {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
@@ -21,8 +13,74 @@ function TutorPage() {
   const [sortBy, setSortBy] = useState<string>("Phù hợp nhất");
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [tutors, setTutors] = useState<Tutor[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [allSubjects, setAllSubjects] = useState<string[]>([]);
 
-  const tutorsPerPage = 6;
+  const tutorsPerPage = 20;
+
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/v1/students/category-subjects");
+        if (res.ok) {
+          const json = await res.json();
+          // Assuming json.data.subjects is a list of {id, category}
+          const categories = json.data.subjects.map((s: any) => s.category);
+          setAllSubjects(categories);
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải danh mục môn học:", error);
+      }
+    };
+    fetchSubjects();
+  }, []);
+
+  const fetchTutors = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.append("keyword", searchQuery);
+      selectedSubjects.forEach(s => params.append("subjects", s));
+      if (priceRange[0] > 50) params.append("minPrice", priceRange[0].toString());
+      if (priceRange[1] < 500) params.append("maxPrice", priceRange[1].toString());
+      if (selectedRating) params.append("minRating", selectedRating.toString());
+      selectedDays.forEach(d => params.append("availableDays", d));
+      
+      params.append("page", currentPage.toString());
+      params.append("size", tutorsPerPage.toString());
+
+      const sortMapping: Record<string, string> = {
+        "Phù hợp nhất": "rating",
+        "Đánh giá cao nhất": "rating",
+        "Học phí: Thấp - Cao": "price_asc",
+        "Học phí: Cao - Thấp": "price_desc"
+      };
+      params.append("sortBy", sortMapping[sortBy] || "rating");
+
+      const res = await fetch(`http://localhost:8080/api/v1/tutors/search?${params.toString()}`);
+      if (res.ok) {
+        const json = await res.json();
+        setTutors(json.data.content);
+        setTotalPages(json.data.totalPages);
+        setTotalElements(json.data.totalElements);
+      }
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách gia sư:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedSubjects, selectedDays, priceRange, selectedRating, sortBy, currentPage, searchQuery]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchTutors();
+    }, 500);
+
+    return () => clearTimeout(handler);
+  }, [fetchTutors]);
 
   const toggleDay = (day: string) => {
     setSelectedDays((prev) =>
@@ -50,76 +108,7 @@ function TutorPage() {
     setCurrentPage(1);
   };
 
-  const filteredAndSortedTutors = useMemo(() => {
-    let result = mockTutors.filter((tutor) => {
-      // Search Query filter
-      if (
-        searchQuery &&
-        !tutor.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !tutor.subjects.some((s) =>
-          s.toLowerCase().includes(searchQuery.toLowerCase()),
-        )
-      ) {
-        return false;
-      }
 
-      // Subjects filter
-      if (
-        selectedSubjects.length > 0 &&
-        !tutor.subjects.some((s) => selectedSubjects.includes(s))
-      ) {
-        return false;
-      }
-
-      // Price range filter
-      if (
-        tutor.pricePerSession < priceRange[0] ||
-        tutor.pricePerSession > priceRange[1]
-      ) {
-        return false;
-      }
-
-      // Rating filter
-      if (selectedRating !== null && tutor.rating < selectedRating) {
-        return false;
-      }
-
-      // Days filter
-      if (
-        selectedDays.length > 0 &&
-        !selectedDays.some((d) => tutor.availableDays.includes(d))
-      ) {
-        return false;
-      }
-
-      return true;
-    });
-
-    // Sorting
-    result.sort((a, b) => {
-      if (sortBy === "Đánh giá cao nhất") return b.rating - a.rating;
-      if (sortBy === "Học phí: Thấp - Cao")
-        return a.pricePerSession - b.pricePerSession;
-      if (sortBy === "Học phí: Cao - Thấp")
-        return b.pricePerSession - a.pricePerSession;
-      return 0; // "Phù hợp nhất" -> Giữ nguyên (hoặc tuỳ chỉnh)
-    });
-
-    return result;
-  }, [
-    selectedSubjects,
-    priceRange,
-    selectedRating,
-    selectedDays,
-    sortBy,
-    searchQuery,
-  ]);
-
-  const totalPages = Math.ceil(filteredAndSortedTutors.length / tutorsPerPage);
-  const currentTutors = filteredAndSortedTutors.slice(
-    (currentPage - 1) * tutorsPerPage,
-    currentPage * tutorsPerPage,
-  );
 
   return (
     <>
@@ -198,7 +187,7 @@ function TutorPage() {
                   Môn học
                 </h3>
                 <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
-                  {SUBJECTS.map((subject) => (
+                  {allSubjects.map((subject) => (
                     <label
                       key={subject}
                       className="flex items-center gap-3 cursor-pointer group"
@@ -365,7 +354,7 @@ function TutorPage() {
               <p className="font-medium text-slate-600 dark:text-slate-400">
                 Hiển thị{" "}
                 <span className="text-slate-900 dark:text-white font-bold">
-                  {filteredAndSortedTutors.length}
+                  {totalElements}
                 </span>{" "}
                 kết quả tìm kiếm
               </p>
@@ -388,12 +377,18 @@ function TutorPage() {
             </div>
 
             {/* Tutor Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {currentTutors.length > 0 ? (
-                currentTutors.map((tutor) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 relative min-h-[400px]">
+              {isLoading && (
+                <div className="absolute inset-0 bg-white/50 dark:bg-background-dark/50 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-xl">
+                  <Loader2 className="animate-spin text-primary" size={40} />
+                </div>
+              )}
+              
+              {tutors.length > 0 ? (
+                tutors.map((tutor) => (
                   <TutorCard key={tutor.id} tutor={tutor} />
                 ))
-              ) : (
+              ) : !isLoading && (
                 <div className="col-span-full py-20 text-center flex flex-col items-center justify-center text-slate-500">
                   <span className="material-symbols-outlined text-4xl mb-2 opacity-50">
                     search_off
