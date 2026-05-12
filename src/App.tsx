@@ -8,6 +8,12 @@ import TutorClassesPage from "./features/user/pages/TutorClassesPage";
 import TutorSchedulePage from "./features/user/pages/TutorSchedulePage";
 import TutorFinancesPage from "./features/user/pages/TutorFinancesPage";
 import TutorClassDetailPage from "./features/user/pages/TutorClassDetailPage";
+import StudentProfilePage from "./features/student_modules/StudentProfilePage";
+import CoursePage from "./features/student_modules/CoursePage";
+import StudentLearningProgressPage from "./features/student_modules/StudentLearningProgressPage";
+import StudentBillingPage from "./features/student_modules/StudentBillingPage";
+import StudentPortalLayout from "./features/student_modules/layouts/StudentPortalLayout";
+import StudentTutorPage from "./features/student_modules/TutorPage";
 import "./App.css";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import UserLayout from "./features/user/layouts/UserLayout";
@@ -22,7 +28,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
 
           {/* Đường dẫn nhánh Tìm gia sư */}
-          <Route path="/tutor" element={<TutorPage />} />
+          {/* <Route path="/tutor" element={<TutorPage />} /> */}
 
           {/* Đường dẫn chi tiết gia sư */}
           <Route path="/tutor/:id" element={<TutorDetailsPage />} />
@@ -32,7 +38,7 @@ function App() {
 
           {/* Danh sách lớp học của gia sư */}
           <Route path="/tutor/classes" element={<TutorClassesPage />} />
-          
+
           {/* Chi tiết lớp học của gia sư */}
           <Route path="/tutor/classes/:id" element={<TutorClassDetailPage />} />
 
@@ -43,6 +49,18 @@ function App() {
           <Route path="/tutor/finances" element={<TutorFinancesPage />} />
         </Route>
 
+        {/* Nhóm các trang Student Portal sử dụng chung Layout */}
+        <Route element={<StudentPortalLayout />}>
+          <Route path="/profile/:userId" element={<StudentProfilePage />} />
+          <Route
+            path="/learning-progress"
+            element={<StudentLearningProgressPage />}
+          />
+          <Route path="/progress" element={<CoursePage />} />
+          <Route path="/tutor" element={<StudentTutorPage />} />
+          <Route path="/billing" element={<StudentBillingPage />} />
+        </Route>
+
         {/* Đường dẫn localhost:5173/login */}
         <Route path="/login" element={<LoginPage />} />
 
@@ -51,7 +69,7 @@ function App() {
 
         {/* Đường dẫn localhost:5173/register */}
         <Route path="/register" element={<RegisterPage />} />
-        
+
         {/* 404 Not Found */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
