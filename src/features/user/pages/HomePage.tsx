@@ -222,9 +222,9 @@ function HomePage() {
           <div className="max-w-[1440px] mx-auto px-6 lg:px-20">
             <div className="flex justify-between items-end mb-16">
               <div>
-                <h2 className="text-4xl font-black mb-4">Gia sư nổi bật</h2>
+                <h2 className="text-4xl font-black mb-4">5 người thành lập và chức vụ</h2>
                 <p className="text-slate-500">
-                  Đội ngũ gia sư xuất sắc từ các trường đại học hàng đầu
+                  Đội ngũ sáng lập hệ thống
                 </p>
               </div>
               <button className="text-primary font-bold flex items-center gap-2 hover:underline">
@@ -237,158 +237,130 @@ function HomePage() {
               </button>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {/* Tutor 1 */}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+              {/* Founder 1 */}
               <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all">
                 <div className="h-48 overflow-hidden relative">
                   <img
-                    alt="Tutor"
+                    alt="Founder"
                     className="w-full h-full object-cover"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBLf-BY3B5f3wL-UBsF3NfpWxFCupty4_RkdwUZC9DqAX-Gv8Hq9gnzZbQY2I_zv3IEOiB8R-AiE2v3yGw4O27b0nBaam63hHL0yArgsJ8mRbmVelEkGUIrLGyzsikvnN_nCSU23VnauvOxsj-rpzVQtMfeHlzUSVHLNuAcKWeBq_IzONFdAfw-s7UCo1uCYEUtY4cQwX3XGnU3IookHCDWMYjQXCBg4XGQf-GZtDdnyEmT1WbFtGkagInvvi-BqWp9auXXLRkPUE"
                   />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <Star
-                      size={14}
-                      className="text-yellow-500 fill-yellow-500"
-                      strokeWidth={2}
-                    />{" "}
-                    4.9
-                  </div>
                 </div>
                 <div className="p-6">
                   <p className="text-primary text-xs font-bold uppercase mb-1">
-                    Tiếng Anh • IELTS
+                    Chief Executive Officer
                   </p>
                   <h4 className="text-lg font-bold mb-2">Trần Thị Minh Anh</h4>
                   <p className="text-slate-500 text-sm mb-4">
-                    Đại học Ngoại Thương • 8.5 IELTS
+                    Định hướng chiến lược & Phát triển
                   </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <p className="font-bold">
-                      250k
-                      <span className="text-slate-400 text-xs font-normal">
-                        /buổi
-                      </span>
-                    </p>
-                    <button className="px-4 py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
-                      Xem profile
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button className="w-full py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                      Xem chi tiết
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Tutor 2 */}
+              {/* Founder 2 */}
               <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all">
                 <div className="h-48 overflow-hidden relative">
                   <img
-                    alt="Tutor"
+                    alt="Founder"
                     className="w-full h-full object-cover"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFwLf2O_7_PCZRH2K3HBN_3wJJAmTgcGUdZlJbVtnNf9gY0tktgmXzK6_PCAiUv-cKBqAs-YcxucBw8oPW2G3QQ_MQx6XvnyHTAFhH3M12JI01SCfJdJTtnxkfh9ao8wrJVnCWC4qT-nveZuGyE9r22w65ey2Vz_IlbKjv7UQlYhYa3RKtd2z8YjhMOpx80h-TA3ugjBOikda3e0lQwu8MQlJugMjffQh7eAUvkp29V5YHeZq-hyQ7kYj_-0bryyONSs-T0JdDQpk"
                   />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <Star
-                      size={14}
-                      className="text-yellow-500 fill-yellow-500"
-                      strokeWidth={2}
-                    />{" "}
-                    5.0
-                  </div>
                 </div>
                 <div className="p-6">
                   <p className="text-primary text-xs font-bold uppercase mb-1">
-                    Toán học • Lý học
+                    Chief Technology Officer
                   </p>
                   <h4 className="text-lg font-bold mb-2">Nguyễn Hoàng Nam</h4>
                   <p className="text-slate-500 text-sm mb-4">
-                    ĐH Bách Khoa Hà Nội • Giải Quốc gia
+                    Kiến trúc hệ thống & Công nghệ
                   </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <p className="font-bold">
-                      300k
-                      <span className="text-slate-400 text-xs font-normal">
-                        /buổi
-                      </span>
-                    </p>
-                    <button className="px-4 py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
-                      Xem profile
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button className="w-full py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                      Xem chi tiết
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Tutor 3 */}
+              {/* Founder 3 */}
               <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all">
                 <div className="h-48 overflow-hidden relative">
                   <img
-                    alt="Tutor"
+                    alt="Founder"
                     className="w-full h-full object-cover"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM-BPrn8v0eCavFwQHIvNsPlKsbBNIe_uGUCYVdUwCXQOrRsdK5g35lmyfGcuIjw1hVKb-vKrRv8DkSKois4KwGotpGQKcxy4hIh3Tb8U3TiOZvoJcjnUsWqH-nnFGtENQZOvrHENzx197fY2wiAilRG2l5LE2yV68HEdbhtGcVpP9NP0BOxBwisE-jVjlsu_cCtSD0XpgxAqVTlcc0wi7sc60gwIlsZJ3H4l6oJVAMz1PahbqPmAnC9hIWwXVGt2c3hsFqvmP4pY"
                   />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <Star
-                      size={14} // Tương đương text-sm (khoảng 14-16px)
-                      className="text-yellow-500 fill-yellow-500"
-                      strokeWidth={2}
-                    />{" "}
-                    4.8
-                  </div>
                 </div>
                 <div className="p-6">
                   <p className="text-primary text-xs font-bold uppercase mb-1">
-                    Ngữ văn • Lịch sử
+                    Chief Operating Officer
                   </p>
                   <h4 className="text-lg font-bold mb-2">Phạm Quỳnh Hoa</h4>
                   <p className="text-slate-500 text-sm mb-4">
-                    ĐH Sư phạm Hà Nội • Thạc sĩ GD
+                    Quản lý vận hành & Đối tác
                   </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <p className="font-bold">
-                      220k
-                      <span className="text-slate-400 text-xs font-normal">
-                        /buổi
-                      </span>
-                    </p>
-                    <button className="px-4 py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
-                      Xem profile
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button className="w-full py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                      Xem chi tiết
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Tutor 4 */}
+              {/* Founder 4 */}
               <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all">
                 <div className="h-48 overflow-hidden relative">
                   <img
-                    alt="Tutor"
+                    alt="Founder"
                     className="w-full h-full object-cover"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxfnejoEW-R5M_ocEDiMvGXOWsrXcEgw84FLPzQOi5ZIGpuETYv8dcfjJfsHlXyhyQsBPx4_4N9c0hCYaBXNtmHvZhlt79_DHspNZvftSLaIFKLssE9rn9Jl8FPeEhcinsKJecBJFDi5WAzMCXQKAH6UU6PJmoXOmP6gy9RduNnUb1Rp_W2lJbwHu9dDFPiFrFegsza4hKMpTPDY2KLvdFi2bSsTiStjgXqEkY_CSu2svvfTzN1Go2lO5rDC3LwTPJ80UK1nSenZU"
                   />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center gap-1 text-sm font-bold">
-                    <Star
-                      size={14}
-                      className="text-yellow-500 fill-yellow-500"
-                      strokeWidth={2}
-                    />{" "}
-                    4.9
-                  </div>
                 </div>
                 <div className="p-6">
                   <p className="text-primary text-xs font-bold uppercase mb-1">
-                    Lập trình • Tin học
+                    Chief Financial Officer
                   </p>
                   <h4 className="text-lg font-bold mb-2">Lê Quang Mạnh</h4>
                   <p className="text-slate-500 text-sm mb-4">
-                    ĐH FPT • Software Engineer
+                    Quản lý tài chính & Đầu tư
                   </p>
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <p className="font-bold">
-                      350k
-                      <span className="text-slate-400 text-xs font-normal">
-                        /buổi
-                      </span>
-                    </p>
-                    <button className="px-4 py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
-                      Xem profile
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button className="w-full py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                      Xem chi tiết
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Founder 5 */}
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all">
+                <div className="h-48 overflow-hidden relative bg-slate-100 flex items-center justify-center">
+                  <img
+                    alt="Founder"
+                    className="w-full h-full object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9w0yvJ5V8q9S3R8w1S4y_G0N9z5hZ9L2H_T9U9P8Y9Q_W8q7r6F3Y1A6r9Q8P5W7X4V1K4Y2Y2X5J8Q8V3S7V8A5W2X1V6H9N3K5H8G6H7Y5Y7X5T3P5W7X1A2H6M6N7G6P6H5Y4Y5W6Y5M6H5G2P7G5Q6W3H5T4V4H7X1T7P2Y2X6M6N4W2T6P7K4X7Y5J1T7X"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://ui-avatars.com/api/?name=Dang+Van+An&size=400&background=random';
+                    }}
+                  />
+                </div>
+                <div className="p-6">
+                  <p className="text-primary text-xs font-bold uppercase mb-1">
+                    Chief Marketing Officer
+                  </p>
+                  <h4 className="text-lg font-bold mb-2">Đặng Văn An</h4>
+                  <p className="text-slate-500 text-sm mb-4">
+                    Marketing & Trải nghiệm
+                  </p>
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button className="w-full py-2 bg-primary/10 text-primary text-sm font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                      Xem chi tiết
                     </button>
                   </div>
                 </div>

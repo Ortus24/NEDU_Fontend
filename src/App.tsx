@@ -3,9 +3,15 @@ import LoginPage from "./features/auth/pages/LoginPage";
 import HomePage from "./features/user/pages/HomePage";
 import TutorPage from "./features/user/pages/TutorPage";
 import TutorDetailsPage from "./features/user/pages/TutorDetailsPage";
+import TutorDashboardPage from "./features/user/pages/TutorDashboardPage";
+import TutorClassesPage from "./features/user/pages/TutorClassesPage";
+import TutorSchedulePage from "./features/user/pages/TutorSchedulePage";
+import TutorFinancesPage from "./features/user/pages/TutorFinancesPage";
+import TutorClassDetailPage from "./features/user/pages/TutorClassDetailPage";
 import "./App.css";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import UserLayout from "./features/user/layouts/UserLayout";
+import NotFoundPage from "./shared/pages/NotFoundPage";
 
 function App() {
   return (
@@ -20,6 +26,21 @@ function App() {
 
           {/* Đường dẫn chi tiết gia sư */}
           <Route path="/tutor/:id" element={<TutorDetailsPage />} />
+
+          {/* Dashboard gia sư */}
+          <Route path="/tutor/dashboard" element={<TutorDashboardPage />} />
+
+          {/* Danh sách lớp học của gia sư */}
+          <Route path="/tutor/classes" element={<TutorClassesPage />} />
+          
+          {/* Chi tiết lớp học của gia sư */}
+          <Route path="/tutor/classes/:id" element={<TutorClassDetailPage />} />
+
+          {/* Lịch dạy của gia sư */}
+          <Route path="/tutor/schedule" element={<TutorSchedulePage />} />
+
+          {/* Quản lý tài chính */}
+          <Route path="/tutor/finances" element={<TutorFinancesPage />} />
         </Route>
 
         {/* Đường dẫn localhost:5173/login */}
@@ -30,6 +51,9 @@ function App() {
 
         {/* Đường dẫn localhost:5173/register */}
         <Route path="/register" element={<RegisterPage />} />
+        
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
