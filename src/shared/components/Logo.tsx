@@ -8,7 +8,7 @@ export default function Logo() {
       <GraduationCap
         size={32}
         strokeWidth={2}
-        className="text-blue-600 transition-all hover:scale-110"
+        className="text-blue-600 transition-all"
       />
     </div>
   );
