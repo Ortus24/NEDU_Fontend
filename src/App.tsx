@@ -17,15 +17,30 @@ import StudentTutorPage from "./features/student_modules/TutorPage";
 import "./App.css";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import UserLayout from "./features/user/layouts/UserLayout";
+
+// Admin Layout
+import AdminLayout from "./layouts/AdminLayout";
+
+// Admin Pages
+import DashboardPage from "./features/admin/pages/DashboardPage";
+import TutorManagementPage from "./features/admin/pages/TutorManagementPage";
+import KycListPage from "./features/admin/pages/KycListPage";
+import KycDetailPage from "./features/admin/pages/KycDetailPage";
+import StudentManagementPage from "./features/admin/pages/StudentManagementPage";
+import FinancePage from "./features/admin/pages/FinancePage";
+import DisputeListPage from "./features/admin/pages/DisputeListPage";
+import DisputeDetailPage from "./features/admin/pages/DisputeDetailPage";
+import SettingsPage from "./features/admin/pages/SettingsPage";
 import NotFoundPage from "./shared/pages/NotFoundPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* ============ USER ROUTES ============ */}
         <Route element={<UserLayout />}>
-          {/* Đường dẫn mặc định */}
           <Route path="/" element={<HomePage />} />
+          <Route path="/tutor" element={<TutorPage />} />
 
           {/* Đường dẫn nhánh Tìm gia sư */}
           {/* <Route path="/tutor" element={<TutorPage />} /> */}
@@ -61,14 +76,23 @@ function App() {
           <Route path="/billing" element={<StudentBillingPage />} />
         </Route>
 
-        {/* Đường dẫn localhost:5173/login */}
+        {/* ============ AUTH ROUTES ============ */}
         <Route path="/login" element={<LoginPage />} />
-
-        {/* Đường dẫn phức tạp: /asdss/login */}
         <Route path="/asdss/login" element={<LoginPage />} />
-
-        {/* Đường dẫn localhost:5173/register */}
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* ============ ADMIN ROUTES ============ */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="tutors" element={<TutorManagementPage />} />
+          <Route path="students" element={<StudentManagementPage />} />
+          <Route path="kyc" element={<KycListPage />} />
+          <Route path="kyc/:id" element={<KycDetailPage />} />
+          <Route path="finance" element={<FinancePage />} />
+          <Route path="disputes" element={<DisputeListPage />} />
+          <Route path="disputes/:id" element={<DisputeDetailPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
 
         {/* 404 Not Found */}
         <Route path="*" element={<NotFoundPage />} />
