@@ -8,12 +8,17 @@ import TutorClassesPage from "./features/user/pages/TutorClassesPage";
 import TutorSchedulePage from "./features/user/pages/TutorSchedulePage";
 import TutorFinancesPage from "./features/user/pages/TutorFinancesPage";
 import TutorClassDetailPage from "./features/user/pages/TutorClassDetailPage";
-import StudentProfilePage from "./features/student_modules/StudentProfilePage";
-import CoursePage from "./features/student_modules/CoursePage";
-import StudentLearningProgressPage from "./features/student_modules/StudentLearningProgressPage";
-import StudentBillingPage from "./features/student_modules/StudentBillingPage";
+import StudentProfilePage from "./features/student_modules/pages/StudentProfilePage";
+import CoursePage from "./features/student_modules/pages/CoursePage";
+import StudentLearningProgressPage from "./features/student_modules/pages/StudentLearningProgressPage";
+import StudentBillingPage from "./features/student_modules/pages/StudentBillingPage";
 import StudentPortalLayout from "./features/student_modules/layouts/StudentPortalLayout";
-import StudentTutorPage from "./features/student_modules/TutorPage";
+import StudentTutorPage from "./features/student_modules/pages/TutorPage";
+import SessionClassroomPage from "./features/student_modules/pages/SessionClassroomPage";
+import TrialBookingPage from "./features/student_modules/pages/TrialBookingPage";
+import TrialBookingGoalsPage from "./features/student_modules/pages/TrialBookingGoalsPage";
+import TrialBookingSuccessPage from "./features/student_modules/pages/TrialBookingSuccessPage";
+import PaymentPage from "./features/student_modules/pages/PaymentPage";
 import "./App.css";
 import RegisterPage from "./features/auth/pages/RegisterPage";
 import UserLayout from "./features/user/layouts/UserLayout";
@@ -40,7 +45,7 @@ function App() {
         {/* ============ USER ROUTES ============ */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/tutor" element={<TutorPage />} />
+          {/* <Route path="/tutor" element={<TutorPage />} /> */}
 
           {/* Đường dẫn nhánh Tìm gia sư */}
           {/* <Route path="/tutor" element={<TutorPage />} /> */}
@@ -74,7 +79,13 @@ function App() {
           <Route path="/progress" element={<CoursePage />} />
           <Route path="/tutor" element={<StudentTutorPage />} />
           <Route path="/billing" element={<StudentBillingPage />} />
+          <Route path="/book-trial" element={<TrialBookingPage />} />
+          <Route path="/book-trial/goals" element={<TrialBookingGoalsPage />} />
+          <Route path="/book-trial/success" element={<TrialBookingSuccessPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
         </Route>
+
+        <Route path="/classroom" element={<SessionClassroomPage />} />
 
         {/* ============ AUTH ROUTES ============ */}
         <Route path="/login" element={<LoginPage />} />

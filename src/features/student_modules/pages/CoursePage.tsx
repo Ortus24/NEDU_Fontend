@@ -42,7 +42,7 @@ interface Course {
   endDate?: string;
   result?: string;
   totalPrice?: string;
-  roadmapStatus?: "SENT" | "REVISION_REQUESTED";
+  roadmapStatus?: "SENT" | "REVISION_REQUESTED" | "APPROVED";
 }
 
 const mockCourses: Course[] = [
@@ -85,6 +85,44 @@ const mockCourses: Course[] = [
     status: "pending",
     totalPrice: "4.800.000 VNĐ",
     roadmapStatus: "SENT"
+  },
+  {
+    id: 4,
+    title: "Toán 11: Hình học không gian",
+    tutor: "Thầy Trần Minh",
+    progress: 20,
+    totalSessions: 10,
+    completedSessions: 2,
+    nextSession: "Ngày mai - 18:00",
+    category: "TOÁN HỌC",
+    escrowStatus: "An toàn",
+    status: "active"
+  },
+  {
+    id: 5,
+    title: "Hóa hữu cơ lớp 12",
+    tutor: "Cô Hà Phương",
+    progress: 0,
+    totalSessions: 15,
+    completedSessions: 0,
+    nextSession: "Chưa bắt đầu",
+    category: "HÓA HỌC",
+    escrowStatus: "An toàn",
+    status: "active"
+  },
+  {
+    id: 6,
+    title: "Vật lý 12: Luyện thi THPT QG",
+    tutor: "Thầy Phan Khoa",
+    progress: 0,
+    totalSessions: 20,
+    completedSessions: 0,
+    nextSession: "Chưa bắt đầu",
+    category: "VẬT LÝ",
+    escrowStatus: "Chờ thanh toán",
+    status: "pending",
+    totalPrice: "5.000.000 VNĐ",
+    roadmapStatus: "APPROVED"
   }
 ];
 
@@ -220,81 +258,107 @@ export default function CoursePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredCourses.length > 0 ? (
-            filteredCourses.map((course) => (
-              <div
-                key={course.id}
-                onClick={() => setSelectedCourseId(course.id)}
-                className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-xl hover:border-indigo-400 transition-all cursor-pointer group flex flex-col md:flex-row items-center gap-8"
-              >
-                <div className={`w-20 h-20 ${course.status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'} rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                  <BookOpen size={32} />
-                </div>
-
-                <div className="flex-grow space-y-4 w-full">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <p className={`text-[10px] font-black uppercase ${course.status === 'completed' ? 'text-emerald-500' : 'text-indigo-500'} tracking-widest`}>{course.category}</p>
-                      <h2 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{course.title}</h2>
-                      <p className="text-sm text-slate-500 font-medium italic">Gia sư: {course.tutor}</p>
+              filteredCourses.map((course) => (
+                <div
+                  key={course.id}
+                  onClick={() => setSelectedCourseId(course.id)}
+                  className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all cursor-pointer group flex flex-col xl:flex-row"
+                >
+                  <div className="w-full xl:w-48 h-48 xl:h-auto relative shrink-0">
+                    <img 
+                      className="w-full h-full object-cover" 
+                      src={course.id === 1 ? "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=600&auto=format&fit=crop" : "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600&auto=format&fit=crop"} 
+                      alt={course.title}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                      <span className="bg-indigo-600 px-2 py-1 rounded-lg text-white text-xs font-bold uppercase tracking-wider">
+                        {course.category}
+                      </span>
                     </div>
-                    {course.status === 'completed' ? (
-                      <button className="px-6 py-2 bg-indigo-600 text-white text-[10px] font-black uppercase rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">Đánh giá gia sư</button>
-                    ) : (
-                      <ChevronRight className="text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
-                    )}
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">
-                        {course.status === 'completed' ? 'Kết quả' : course.status === 'pending' ? 'Trạng thái' : 'Buổi tới'}
-                      </p>
-                      <p className={`text-xs font-bold ${course.status === 'completed' || course.status === 'pending' ? 'text-indigo-600' : 'text-slate-700'} flex items-center gap-1`}>
-                        {course.status === 'completed' ? <Star size={12} className="fill-indigo-600" /> : <Calendar size={12} />}
-                        {course.status === 'completed' ? course.result : course.status === 'pending' ? (course.roadmapStatus === 'SENT' ? 'Chờ bạn phê duyệt' : 'Gia sư đang chỉnh sửa') : course.nextSession}
-                      </p>
+                  <div className="flex-1 p-6 flex flex-col">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2">{course.title}</h3>
+                      {course.status === 'completed' ? (
+                        <div className="flex items-center gap-1 shrink-0 ml-2">
+                          <CheckCircle2 size={16} className="text-emerald-500" />
+                        </div>
+                      ) : course.status === 'pending' ? (
+                        <div className="flex items-center gap-1 shrink-0 ml-2">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                            course.roadmapStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'
+                          }`}>
+                            {course.roadmapStatus === 'APPROVED' ? 'Đã duyệt' : 'Chờ xử lý'}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 shrink-0 ml-2">
+                          <Star size={16} className="text-amber-400 fill-amber-400" />
+                          <span className="text-xs font-bold text-amber-500">VIP</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase">
-                        {course.status === 'pending' ? 'Học phí dự kiến' : 'Escrow'}
-                      </p>
-                      <p className={`text-xs font-bold ${course.status === 'completed' || course.status === 'pending' ? 'text-emerald-600' : 'text-emerald-600'} flex items-center gap-1`}>
-                        <DollarSign size={12} /> {course.status === 'pending' ? course.totalPrice : course.escrowStatus}
-                      </p>
+
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="h-6 w-6 rounded-full bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+                        <img alt="Tutor Avatar" src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${course.tutor}`} />
+                      </div>
+                      <span className="text-sm text-slate-500 font-medium truncate">Gia sư: {course.tutor}</span>
                     </div>
-                    <div className="col-span-2 space-y-2">
-                      <div className="flex justify-between text-[10px] font-bold">
-                        <span className={course.status === 'completed' ? 'text-emerald-600' : 'text-indigo-600'}>
-                          {course.status === 'completed'
-                            ? `Hoàn thành: ${course.endDate}`
-                            : course.status === 'pending'
-                              ? `Dự kiến: ${course.totalSessions} buổi`
-                              : `Tiến độ: ${course.completedSessions}/${course.totalSessions} buổi`}
+
+                    <div className="mt-auto">
+                      <div className="flex justify-between items-end mb-1">
+                        <span className="text-xs font-medium text-slate-500">Tiến độ: {course.progress}%</span>
+                        <span className={`text-xs font-bold ${course.status === 'completed' ? 'text-emerald-600' : 'text-indigo-600'}`}>
+                          {course.status === 'pending' ? `${course.totalSessions} bài dự kiến` : `${course.completedSessions}/${course.totalSessions} bài học`}
                         </span>
-                        <span>{course.progress}%</span>
                       </div>
-                      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div className={`h-full ${course.status === 'completed' ? 'bg-emerald-500' : 'bg-indigo-600'} rounded-full`} style={{ width: `${course.progress}%` }} />
+                      <div className="h-2 w-full bg-slate-100 rounded-full mb-4 overflow-hidden">
+                        <div className={`h-full ${course.status === 'completed' ? 'bg-emerald-500' : 'bg-indigo-600'} rounded-full`} style={{ width: `${course.progress}%` }}></div>
                       </div>
+                      {course.status === 'completed' ? (
+                        <button className="w-full py-2.5 px-4 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm">
+                          <Star size={16} />
+                          Đánh giá gia sư
+                        </button>
+                      ) : course.status === 'pending' ? (
+                        <button 
+                          onClick={(e) => {
+                            if (course.roadmapStatus === 'APPROVED') {
+                              e.stopPropagation();
+                              navigate('/payment');
+                            }
+                          }}
+                          className={`w-full py-2.5 px-4 text-white rounded-xl font-bold active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm shadow-md ${course.roadmapStatus === 'APPROVED' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-200' : 'bg-sky-500 hover:bg-sky-600 shadow-sky-200'}`}
+                        >
+                          {course.roadmapStatus === 'APPROVED' ? <CheckCircle2 size={16} /> : <Timer size={16} />}
+                          {course.roadmapStatus === 'APPROVED' ? 'Thanh toán & Nhập học' : 'Xem chi tiết lộ trình'}
+                        </button>
+                      ) : (
+                        <button className="w-full py-2.5 px-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm shadow-md shadow-indigo-200">
+                          <Video size={16} />
+                          Bắt đầu học
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="col-span-full bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center space-y-4">
+                <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                  <Search size={32} />
+                </div>
+                <div>
+                  <p className="text-slate-900 font-bold">Không tìm thấy khóa học nào</p>
+                  <p className="text-slate-400 text-sm">Thử thay đổi từ khóa tìm kiếm của bạn xem sao.</p>
+                </div>
               </div>
-            ))
-          ) : (
-            <div className="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center space-y-4">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto text-slate-300">
-                <Search size={32} />
-              </div>
-              <div>
-                <p className="text-slate-900 font-bold">Không tìm thấy khóa học nào</p>
-                <p className="text-slate-400 text-sm">Thử thay đổi từ khóa tìm kiếm của bạn xem sao.</p>
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
       </div>
     );
   }

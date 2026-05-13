@@ -7,7 +7,6 @@ import {
   Bell,
   Settings,
   GraduationCap,
-  LayoutDashboard,
   LogOut,
   ChevronDown
 } from "lucide-react";
@@ -130,7 +129,7 @@ export default function StudentPortalLayout() {
       </header>
 
       {/* ── Main Content Area ─────────────────────────────────────────────── */}
-      <main className="flex-grow pt-24 pb-28 w-full max-w-5xl mx-auto px-4 md:px-6">
+      <main className="flex-grow pt-24 pb-28 w-full px-4 sm:px-8 md:px-16 lg:px-24 xl:px-32">
         <Outlet />
       </main>
 

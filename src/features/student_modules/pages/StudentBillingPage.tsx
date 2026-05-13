@@ -45,21 +45,14 @@ export default function StudentBillingPage() {
       </div>
 
       {/* ── Financial Overview Bento ──────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         {/* Balance Card */}
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative overflow-hidden group">
-          <div className="absolute -right-4 -bottom-4 text-indigo-50 opacity-50 group-hover:scale-110 transition-transform">
-            <CreditCard size={160} />
-          </div>
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col justify-between relative overflow-hidden group">
           <div className="relative z-10">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Số dư khả dụng</span>
             <div className="mt-2 flex items-baseline gap-2">
               <h2 className="text-5xl font-black text-indigo-600 tracking-tighter">5.420.000</h2>
               <span className="text-xl font-bold text-indigo-400">VND</span>
-            </div>
-            <div className="mt-6 flex items-center gap-2 text-slate-500 bg-slate-50 w-fit px-4 py-2 rounded-xl border border-slate-100">
-              <Lock size={16} className="text-indigo-400" />
-              <span className="text-xs font-bold">2.400.000 VND đang được giữ trong Escrow</span>
             </div>
           </div>
           <div className="mt-10 relative z-10">
@@ -67,33 +60,6 @@ export default function StudentBillingPage() {
               <PlusCircle size={18} />
               Nạp tiền vào ví
             </button>
-          </div>
-        </div>
-
-        {/* Escrow Visualizer */}
-        <div className="bg-slate-900 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <ShieldCheck size={80} />
-          </div>
-          <h3 className="text-lg font-black mb-6 flex items-center gap-2">
-             Quỹ Escrow
-          </h3>
-          <div className="space-y-4">
-            {[
-              { title: "Khóa học ReactJS", amount: "1.200.000đ" },
-              { title: "UI/UX Advanced", amount: "1.200.000đ" }
-            ].map((item, i) => (
-              <div key={i} className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-white/20 transition-colors">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">{item.title}</p>
-                <div className="flex justify-between items-end mt-1">
-                  <span className="text-lg font-black">{item.amount}</span>
-                  <span className="text-[9px] bg-indigo-500 text-white px-2 py-0.5 rounded-full uppercase font-black tracking-tighter">Đang giữ</span>
-                </div>
-              </div>
-            ))}
-            <p className="text-[10px] text-slate-400 mt-6 italic leading-relaxed">
-              * Tiền sẽ được giải ngân cho gia sư sau khi mỗi buổi học hoàn thành.
-            </p>
           </div>
         </div>
       </div>
