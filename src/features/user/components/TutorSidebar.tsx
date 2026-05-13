@@ -8,6 +8,8 @@ import {
   Settings,
   HelpCircle,
   Plus,
+  Clock,
+  MessageCircle,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -21,6 +23,16 @@ const NAV_ITEMS = [
     icon: <CalendarDays size={18} />,
     label: "Schedule",
     to: "/tutor/schedule",
+  },
+  {
+    icon: <Clock size={18} />,
+    label: "Availability",
+    to: "/tutor/availability",
+  },
+  {
+    icon: <MessageCircle size={18} />,
+    label: "Trial Requests",
+    to: "/tutor/trial-requests",
   },
   { icon: <CreditCard size={18} />, label: "Finances", to: "/tutor/finances" },
 ];

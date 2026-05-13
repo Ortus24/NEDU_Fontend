@@ -8,6 +8,9 @@ import TutorClassesPage from "./features/user/pages/TutorClassesPage";
 import TutorSchedulePage from "./features/user/pages/TutorSchedulePage";
 import TutorFinancesPage from "./features/user/pages/TutorFinancesPage";
 import TutorClassDetailPage from "./features/user/pages/TutorClassDetailPage";
+import TutorAvailabilityPage from "./features/user/pages/TutorAvailabilityPage";
+import TutorTrialRequestsPage from "./features/user/pages/TutorTrialRequestsPage";
+import TutorTrialRequestDetailPage from "./features/user/pages/TutorTrialRequestDetailPage";
 import StudentProfilePage from "./features/student_modules/StudentProfilePage";
 import CoursePage from "./features/student_modules/CoursePage";
 import StudentLearningProgressPage from "./features/student_modules/StudentLearningProgressPage";
@@ -62,6 +65,13 @@ function App() {
 
           {/* Quản lý tài chính */}
           <Route path="/tutor/finances" element={<TutorFinancesPage />} />
+
+          {/* Cài đặt thời gian rảnh */}
+          <Route path="/tutor/availability" element={<TutorAvailabilityPage />} />
+
+          {/* Yêu cầu học thử */}
+          <Route path="/tutor/trial-requests" element={<TutorTrialRequestsPage />} />
+          <Route path="/tutor/trial-requests/:id" element={<TutorTrialRequestDetailPage />} />
         </Route>
 
         {/* Nhóm các trang Student Portal sử dụng chung Layout */}
