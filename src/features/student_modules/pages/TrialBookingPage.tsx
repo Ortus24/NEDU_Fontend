@@ -1,8 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star, History, Briefcase, Globe, Calendar, List, HelpCircle, Clock, Video, ArrowRight } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+
+interface AvailabilitySlot {
+  id: string;
+  dayOfWeek: string;
+  startTime: string;
+  endTime: string;
+}
+
+interface TutorDetail {
+  id: string;
+  name: string;
+  avatar: string;
+  rating: number;
+  reviewsCount: number;
+  location: string;
+  subjects: string[];
+  description: string;
+  experienceYears: number;
+  pricePerSession: number;
+  availableDays: string[];
+  availabilitySlots: AvailabilitySlot[];
+}
 
 export default function TrialBookingPage() {
-  const [selectedTime, setSelectedTime] = useState<string>("09:30-4"); // Example selected time
+  const { tutorId } = useParams<{ tutorId: string }>();
+  const navigate = useNavigate();
+  const [tutor, setTutor] = useState<TutorDetail | null>(null);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTutor = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/api/v1/tutors/${tutorId}`);
+        if (res.ok) {
+          const json = await res.json();
+          setTutor(json.data);
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải thông tin gia sư:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (tutorId) {
+      fetchTutor();
+    }
+  }, [tutorId]);
+
+  const handleContinue = () => {
+    if (selectedSlotId) {
+      navigate(`/book-trial/${tutorId}/goals?slotId=${selectedSlotId}`);
+    }
+  };
+
+  const daysOfWeek = [
+    { label: "Th 2", value: "T2" },
+    { label: "Th 3", value: "T3" },
+    { label: "Th 4", value: "T4" },
+    { label: "Th 5", value: "T5" },
+    { label: "Th 6", value: "T6" },
+    { label: "Th 7", value: "T7" },
+    { label: "CN", value: "CN" },
+  ];
+
+  if (isLoading) {
+    return <div className="text-center p-8 text-slate-500">Đang tải thông tin gia sư...</div>;
+  }
+
+  if (!tutor) {
+    return <div className="text-center p-8 text-red-500">Không tìm thấy thông tin gia sư.</div>;
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-7xl mx-auto w-full">
@@ -14,31 +84,29 @@ export default function TrialBookingPage() {
             <img
               alt="Tutor Profile"
               className="h-20 w-20 rounded-xl object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL9LAG2N3UjPhV1nTtUZc-sAkyUrprCnOBdI0eZU_D0plhEyU-jAftXZFz1C5QDEpUul6G5E6lKEuBcQixhVj-xFTxFjwM-yy1p1z6FLcs-lVSdK1JM9LyTgZH0TaCxrggxvdNTOy-OxLQtiQnoOjmrACd4mydt917-MfV8mxZBy9Qqy8GICvQVSdvbdS-NyYq3tsgmhXfjvGdTCBUo2u_uHIkBSWbP05LQprN-zT9FMQNXE6gaBa9XNvZFRDJxfBJt9q6Zp3GUT1o"
+              src={tutor.avatar || "https://via.placeholder.com/150"}
             />
             <div>
-              <h2 className="text-2xl font-bold text-slate-900">Cô Minh Anh</h2>
+              <h2 className="text-2xl font-bold text-slate-900">{tutor.name}</h2>
               <div className="flex items-center gap-1 text-amber-500 mt-1">
                 <Star size={16} fill="currentColor" />
-                <span className="text-sm font-medium text-slate-700">4.9 (124 đánh giá)</span>
+                <span className="text-sm font-medium text-slate-700">{tutor.rating} ({tutor.reviewsCount} đánh giá)</span>
               </div>
-              <span className="inline-block mt-2 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-semibold">
-                IELTS Specialist
-              </span>
+              {tutor.subjects.length > 0 && (
+                <span className="inline-block mt-2 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-semibold">
+                  {tutor.subjects[0]}
+                </span>
+              )}
             </div>
           </div>
           <div className="space-y-3 text-sm text-slate-500 border-t border-slate-100 pt-4">
             <div className="flex items-center gap-3">
-              <History size={18} className="text-indigo-500" />
-              <span>8.5 IELTS Overall (Speaking 9.0)</span>
-            </div>
-            <div className="flex items-center gap-3">
               <Briefcase size={18} className="text-indigo-500" />
-              <span>5 năm kinh nghiệm giảng dạy</span>
+              <span>{tutor.experienceYears} năm kinh nghiệm</span>
             </div>
             <div className="flex items-center gap-3">
               <Globe size={18} className="text-indigo-500" />
-              <span>Tiếng Việt, Tiếng Anh</span>
+              <span>{tutor.location}</span>
             </div>
           </div>
         </div>
@@ -96,115 +164,58 @@ export default function TrialBookingPage() {
           {/* Weekly Calendar View */}
           <div className="-mx-8 px-8 md:mx-0 md:px-0 overflow-x-auto pb-4">
             <div className="grid grid-cols-7 gap-2 border-t border-slate-100 pt-8 min-w-[600px] md:min-w-0">
-            {/* Week Header */}
-            {[
-              { day: "Th 2", date: "12" },
-              { day: "Th 3", date: "13" },
-              { day: "Th 4", date: "14", active: true },
-              { day: "Th 5", date: "15" },
-              { day: "Th 6", date: "16" },
-              { day: "Th 7", date: "17" },
-              { day: "CN", date: "18" },
-            ].map((d, i) => (
-              <div
-                key={i}
-                className={`text-center pb-4 border-b-2 ${
-                  d.active ? "border-indigo-600" : "border-transparent border-b-slate-50"
-                }`}
-              >
-                <span
-                  className={`block text-xs uppercase tracking-wider font-bold mb-1 ${
-                    d.active ? "text-indigo-600" : "text-slate-400"
-                  }`}
-                >
-                  {d.day}
-                </span>
-                <span className={`text-lg font-bold ${d.active ? "text-indigo-600" : "text-slate-900"}`}>
-                  {d.date}
-                </span>
-              </div>
-            ))}
+              {/* Week Header */}
+              {daysOfWeek.map((d, i) => {
+                const isActive = tutor.availableDays.includes(d.value);
+                return (
+                  <div
+                    key={i}
+                    className={`text-center pb-4 border-b-2 ${
+                      isActive ? "border-indigo-600" : "border-transparent border-b-slate-50"
+                    }`}
+                  >
+                    <span
+                      className={`block text-xs uppercase tracking-wider font-bold mb-1 ${
+                        isActive ? "text-indigo-600" : "text-slate-400"
+                      }`}
+                    >
+                      {d.label}
+                    </span>
+                  </div>
+                );
+              })}
 
-            {/* Availability Slots */}
-            {/* Column 1 */}
-            <div className="flex flex-col gap-2 pt-4">
-              <button className="w-full py-2 px-1 text-xs border border-slate-100 rounded-lg text-slate-400 cursor-not-allowed bg-slate-50">
-                08:00
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                09:30
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                11:00
-              </button>
+              {/* Availability Slots */}
+              {daysOfWeek.map((day) => {
+                const slotsForDay = tutor.availabilitySlots.filter(s => s.dayOfWeek === day.value);
+                return (
+                  <div key={day.value} className="flex flex-col gap-2 pt-4">
+                    {slotsForDay.length > 0 ? (
+                      slotsForDay.map(slot => {
+                        const isSelected = selectedSlotId === slot.id;
+                        return (
+                          <button
+                            key={slot.id}
+                            onClick={() => setSelectedSlotId(slot.id)}
+                            className={`w-full py-2 px-1 text-xs rounded-lg font-medium transition-colors ${
+                              isSelected
+                                ? "bg-indigo-600 text-white font-bold ring-2 ring-indigo-600 ring-offset-2"
+                                : "border border-indigo-100 text-indigo-600 hover:bg-indigo-50"
+                            }`}
+                          >
+                            {slot.startTime.substring(0, 5)}
+                          </button>
+                        );
+                      })
+                    ) : (
+                      <div className="w-full py-2 px-1 text-xs border border-slate-100 rounded-lg text-slate-400 cursor-not-allowed bg-slate-50 text-center">
+                        Nghỉ
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-
-            {/* Column 2 */}
-            <div className="flex flex-col gap-2 pt-4">
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                08:00
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-slate-100 rounded-lg text-slate-400 cursor-not-allowed bg-slate-50">
-                09:30
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                14:00
-              </button>
-            </div>
-
-            {/* Column 3 (Current/Selected Day) */}
-            <div className="flex flex-col gap-2 pt-4">
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                08:00
-              </button>
-              <button className="w-full py-2 px-1 text-xs bg-indigo-600 text-white rounded-lg font-bold ring-2 ring-indigo-600 ring-offset-2">
-                09:30
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                15:30
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                17:00
-              </button>
-            </div>
-
-            {/* Column 4 */}
-            <div className="flex flex-col gap-2 pt-4">
-              <button className="w-full py-2 px-1 text-xs border border-slate-100 rounded-lg text-slate-400 cursor-not-allowed bg-slate-50">
-                08:00
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                10:00
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                16:00
-              </button>
-            </div>
-
-            {/* Column 5 */}
-            <div className="flex flex-col gap-2 pt-4">
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                09:00
-              </button>
-              <button className="w-full py-2 px-1 text-xs border border-indigo-100 rounded-lg text-indigo-600 font-medium hover:bg-indigo-50 transition-colors">
-                11:00
-              </button>
-            </div>
-
-            {/* Column 6 */}
-            <div className="flex flex-col gap-2 pt-4">
-              <button className="w-full py-2 px-1 text-xs border border-slate-100 rounded-lg text-slate-400 cursor-not-allowed bg-slate-50">
-                Hết lịch
-              </button>
-            </div>
-
-            {/* Column 7 */}
-            <div className="flex flex-col gap-2 pt-4">
-              <button className="w-full py-2 px-1 text-xs border border-slate-100 rounded-lg text-slate-400 cursor-not-allowed bg-slate-50">
-                Nghỉ
-              </button>
-            </div>
-          </div>
           </div>
           {/* Footer Actions */}
           <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
@@ -213,10 +224,21 @@ export default function TrialBookingPage() {
               <span className="text-sm">Múi giờ: Vietnam (GMT+7)</span>
             </div>
             <div className="flex gap-4 w-full md:w-auto">
-              <button className="flex-1 md:flex-none px-6 py-2 border border-slate-200 rounded-full font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
+              <button 
+                onClick={() => navigate(-1)}
+                className="flex-1 md:flex-none px-6 py-2 border border-slate-200 rounded-full font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+              >
                 Hủy
               </button>
-              <button className="flex-1 md:flex-none px-8 py-2 bg-indigo-600 text-white rounded-full font-bold shadow-lg shadow-indigo-200 hover:opacity-90 transition-all flex items-center justify-center gap-2">
+              <button 
+                onClick={handleContinue}
+                disabled={!selectedSlotId}
+                className={`flex-1 md:flex-none px-8 py-2 rounded-full font-bold shadow-lg transition-all flex items-center justify-center gap-2 ${
+                  selectedSlotId 
+                    ? "bg-indigo-600 text-white shadow-indigo-200 hover:opacity-90" 
+                    : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none"
+                }`}
+              >
                 Tiếp tục
                 <ArrowRight size={16} />
               </button>

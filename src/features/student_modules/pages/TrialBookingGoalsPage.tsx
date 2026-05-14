@@ -1,15 +1,62 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Star, Check, TrendingUp, GraduationCap, MessageCircle, BookOpen, Clock, Video, History, Briefcase, Globe } from "lucide-react";
+import { Link, useParams, useSearchParams, useNavigate } from "react-router-dom";
+import { Star, Check, TrendingUp, GraduationCap, MessageCircle, BookOpen, Clock, Video, History, Briefcase, Globe, Loader2 } from "lucide-react";
 
 export default function TrialBookingGoalsPage() {
+  const { tutorId } = useParams<{ tutorId: string }>();
+  const [searchParams] = useSearchParams();
+  const slotId = searchParams.get("slotId");
+  const navigate = useNavigate();
+
   const [level, setLevel] = useState<string>("Cơ bản");
   const [goals, setGoals] = useState<string[]>(["Luyện thi chứng chỉ"]);
+  const [expectedSessions, setExpectedSessions] = useState<number>(10);
+  const [noteToTutor, setNoteToTutor] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const toggleGoal = (goal: string) => {
     setGoals((prev) =>
       prev.includes(goal) ? prev.filter((g) => g !== goal) : [...prev, goal]
     );
+  };
+
+  const handleContinue = async () => {
+    if (!slotId) {
+      alert("Vui lòng chọn khung giờ học thử trước khi tiếp tục!");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("http://localhost:8080/api/v1/bookings/trial", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tutorId,
+          // Use a dummy studentId since auth is not integrated yet
+          studentId: "dbc07b19-89af-48ac-badf-eb161cd90834",
+          availabilitySlotId: slotId,
+          studentScore: level,
+          studentGoal: goals.join(", "),
+          expectedSessions,
+          noteToTutor,
+        }),
+      });
+
+      if (response.ok) {
+        navigate(`/book-trial/${tutorId}/success`);
+      } else {
+        const data = await response.json();
+        alert(data.message || "Đã xảy ra lỗi khi tạo lịch học thử.");
+      }
+    } catch (error) {
+      console.error("Error creating booking:", error);
+      alert("Không thể kết nối đến server.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -143,10 +190,25 @@ export default function TrialBookingGoalsPage() {
               </div>
             </div>
 
-            {/* Field 3: Ghi chú thêm */}
+            {/* Field 3: Số buổi dự kiến */}
+            <div className="space-y-4">
+              <label className="text-lg font-bold text-slate-900">Số buổi dự kiến muốn học</label>
+              <input
+                type="number"
+                min="1"
+                value={expectedSessions}
+                onChange={(e) => setExpectedSessions(Number(e.target.value))}
+                className="w-full md:w-1/3 p-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none text-base text-slate-900"
+                placeholder="Ví dụ: 10"
+              />
+            </div>
+
+            {/* Field 4: Ghi chú thêm */}
             <div className="space-y-4">
               <label className="text-lg font-bold text-slate-900">Ghi chú thêm cho gia sư</label>
               <textarea
+                value={noteToTutor}
+                onChange={(e) => setNoteToTutor(e.target.value)}
                 className="w-full min-h-[160px] p-4 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none text-base text-slate-900 placeholder:text-slate-400"
                 placeholder="Ví dụ: Em muốn tập trung vào kỹ năng Speaking, đặc biệt là phần phát âm và nối âm trong các đoạn hội thoại hàng ngày..."
               ></textarea>
@@ -161,7 +223,7 @@ export default function TrialBookingGoalsPage() {
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-500">Thời lượng</p>
-                <p className="text-base font-bold text-slate-900">60 phút / buổi</p>
+                <p className="text-base font-bold text-slate-900">45 phút / buổi học thử</p>
               </div>
             </div>
             <div className="flex items-center gap-4 p-4 rounded-xl bg-slate-50">
@@ -179,13 +241,22 @@ export default function TrialBookingGoalsPage() {
         {/* Actions */}
         <div className="flex justify-between items-center py-4">
           <Link
-            to="/book-trial"
+            to={`/book-trial/${tutorId}`}
             className="px-8 py-3 rounded-xl border border-indigo-600 text-indigo-600 font-bold hover:bg-indigo-50 transition-colors active:scale-95"
           >
             Quay lại
           </Link>
-          <button className="px-10 py-3 rounded-xl bg-indigo-600 text-white font-bold shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95">
-            Tiếp tục
+          <button 
+            onClick={handleContinue}
+            disabled={isSubmitting}
+            className={`px-10 py-3 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${
+              isSubmitting 
+                ? "bg-indigo-400 text-white cursor-not-allowed shadow-none" 
+                : "bg-indigo-600 text-white shadow-indigo-600/20 hover:bg-indigo-700"
+            }`}
+          >
+            {isSubmitting && <Loader2 size={18} className="animate-spin" />}
+            Xác nhận Đăng ký
           </button>
         </div>
       </div>

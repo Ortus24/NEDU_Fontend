@@ -86,9 +86,12 @@ export function TutorCard({ tutor }: TutorCardProps) {
         >
           Hồ sơ
         </Link>
-        <button className="w-full flex items-center justify-center py-2.5 bg-primary text-white font-bold text-sm rounded-xl hover:opacity-90 transition-opacity">
+        <Link
+          to={`/book-trial/${tutor.id}`}
+          className="w-full flex items-center justify-center py-2.5 bg-primary text-white font-bold text-sm rounded-xl hover:opacity-90 transition-opacity"
+        >
           Học thử
-        </button>
+        </Link>
       </div>
     </div>
   );
