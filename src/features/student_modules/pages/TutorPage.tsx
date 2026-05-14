@@ -17,19 +17,18 @@ function TutorPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [allSubjects, setAllSubjects] = useState<string[]>([]);
+  const [allSubjects, setAllSubjects] = useState<{ id: string; name: string; category: string }[]>([]);
 
   const tutorsPerPage = 20;
 
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/v1/students/category-subjects");
+        const res = await fetch("http://localhost:8080/api/v1/tutors/subjects");
         if (res.ok) {
           const json = await res.json();
-          // Assuming json.data.subjects is a list of {id, category}
-          const categories = json.data.subjects.map((s: any) => s.category);
-          setAllSubjects(categories);
+          // json.data = [{id, name, category}]
+          setAllSubjects(json.data || []);
         }
       } catch (error) {
         console.error("Lỗi khi tải danh mục môn học:", error);
@@ -43,7 +42,9 @@ function TutorPage() {
     try {
       const params = new URLSearchParams();
       if (searchQuery) params.append("keyword", searchQuery);
+      // Send subject NAMES to backend (Specification matches by name or category)
       selectedSubjects.forEach(s => params.append("subjects", s));
+      // Price: frontend range is in k-unit (50k–500k), backend multiplies by 1000
       if (priceRange[0] > 50) params.append("minPrice", priceRange[0].toString());
       if (priceRange[1] < 500) params.append("maxPrice", priceRange[1].toString());
       if (selectedRating) params.append("minRating", selectedRating.toString());
@@ -53,12 +54,13 @@ function TutorPage() {
       params.append("size", tutorsPerPage.toString());
 
       const sortMapping: Record<string, string> = {
-        "Phù hợp nhất": "rating",
-        "Đánh giá cao nhất": "rating",
+        "Phù hợp nhất": "reputation",
+        "Đánh giá cao nhất": "reputation",
         "Học phí: Thấp - Cao": "price_asc",
-        "Học phí: Cao - Thấp": "price_desc"
+        "Học phí: Cao - Thấp": "price_desc",
+        "Mới nhất": "newest",
       };
-      params.append("sortBy", sortMapping[sortBy] || "rating");
+      params.append("sortBy", sortMapping[sortBy] || "reputation");
 
       const res = await fetch(`http://localhost:8080/api/v1/tutors/search?${params.toString()}`);
       if (res.ok) {
@@ -188,22 +190,29 @@ function TutorPage() {
                     Môn học
                   </h3>
                   <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
-                    {allSubjects.map((subject) => (
-                      <label
-                        key={subject}
-                        className="flex items-center gap-3 cursor-pointer group"
-                      >
-                        <input
-                          checked={selectedSubjects.includes(subject)}
-                          onChange={() => toggleSubject(subject)}
-                          className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
-                          type="checkbox"
-                        />
-                        <span className="text-sm group-hover:text-primary transition-colors">
-                          {subject}
-                        </span>
-                      </label>
-                    ))}
+                    {allSubjects.length === 0 ? (
+                      <p className="text-xs text-slate-400 italic">Đang tải...</p>
+                    ) : (
+                      allSubjects.map((subject) => (
+                        <label
+                          key={subject.id}
+                          className="flex items-center gap-3 cursor-pointer group"
+                        >
+                          <input
+                            checked={selectedSubjects.includes(subject.name)}
+                            onChange={() => toggleSubject(subject.name)}
+                            className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
+                            type="checkbox"
+                          />
+                          <span className="text-sm group-hover:text-primary transition-colors">
+                            {subject.name}
+                            {subject.category && subject.category !== subject.name && (
+                              <span className="text-xs text-slate-400 ml-1">({subject.category})</span>
+                            )}
+                          </span>
+                        </label>
+                      ))
+                    )}
                   </div>
                 </div>
 
