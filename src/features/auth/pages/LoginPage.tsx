@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import {
-  BrowserRouter,
-  Routes,
-  Route,
   Link,
   useNavigate,
 } from "react-router-dom";
-import Logo from "../../../shared/components/Logo";
 import { GraduationCap } from "lucide-react";
+import { loginApi } from "../api";
 
 // --- Sub-component: Icon Eye (Lucide-like) ---
 const EyeIcon = () => (
@@ -48,13 +45,45 @@ const EyeOffIcon = () => (
 
 // --- Component: Login Page ---
 function LoginPage() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Logging in with:", { email, password });
+    setErrorMsg("");
+    setIsLoading(true);
+    try {
+      const data = await loginApi({ email, password });
+      
+      const userInfo = {
+        userId: data.userId,
+        email: data.email,
+        role: data.role,
+        fullName: data.fullName,
+        avatarUrl: data.avatarUrl,
+      };
+      localStorage.setItem("user", JSON.stringify(userInfo));
+      
+      if (data.role === "ADMIN") {
+        navigate("/admin");
+      } else if (data.role === "TUTOR") {
+        navigate("/tutor/dashboard"); // Cập nhật dựa trên route của dự án
+      } else {
+        navigate("/");
+      }
+    } catch (error: any) {
+      const errData = error.response?.data;
+      // Backend lỗi 4xx trả về: { message, error, status, ... }
+      const msg =
+        errData?.message || errData?.error || "Đăng nhập thất bại. Vui lòng thử lại.";
+      setErrorMsg(msg);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -184,6 +213,11 @@ function LoginPage() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
+              {errorMsg && (
+                <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100">
+                  {errorMsg}
+                </div>
+              )}
               <div className="space-y-2">
                 <label
                   className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1"
@@ -253,22 +287,25 @@ function LoginPage() {
 
               <button
                 type="submit"
-                className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-[0_10px_20px_-10px_rgba(37,99,235,0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 group"
+                disabled={isLoading}
+                className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-[0_10px_20px_-10px_rgba(37,99,235,0.4)] transition-all active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Sign In
-                <svg
-                  className="w-5 h-5 transition-transform group-hover:translate-x-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2.5}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
+                {isLoading ? "Đang xử lý..." : "Sign In"}
+                {!isLoading && (
+                  <svg
+                    className="w-5 h-5 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                )}
               </button>
             </form>
 

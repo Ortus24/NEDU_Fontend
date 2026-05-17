@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../../../shared/components/Logo";
+import { registerApi } from "../api";
 
 type Role = "student" | "tutor" | null;
 
@@ -35,6 +35,15 @@ export default function RegisterPage() {
   const [role, setRole] = useState<Role>(null);
   const [error, setError] = useState<string | null>(null);
   const [isErrorVisible, setIsErrorVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Form fields
+  const [fullName, setFullName] = useState("");
+  const [dob, setDob] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -60,6 +69,57 @@ export default function RegisterPage() {
   const totalSteps = isStudent ? 2 : 4;
   const progressPercent = ((currentStep - 1) / totalSteps) * 100;
 
+  // Submit registration to API
+  const handleRegisterSubmit = async () => {
+    if (password !== confirmPassword) {
+      setError("Mật khẩu xác nhận không khớp!");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự!");
+      return;
+    }
+    if (!role) return;
+
+    setIsLoading(true);
+    try {
+      const data = await registerApi({
+        fullName,
+        email,
+        phone,
+        password,
+        role: role.toUpperCase() as "STUDENT" | "TUTOR",
+      });
+
+      // Lưu user info vào localStorage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          userId: data.userId,
+          email: data.email,
+          role: data.role,
+          fullName: data.fullName,
+          avatarUrl: data.avatarUrl,
+        })
+      );
+
+      if (role === "tutor") {
+        // Tutor tiếp tục bước 3 (upload bằng cấp)
+        setStep(3);
+      } else {
+        // Student hoàn tất -> về trang chủ
+        navigate("/");
+      }
+    } catch (err: any) {
+      const errData = err.response?.data;
+      const msg =
+        errData?.message || errData?.error || "Đăng ký thất bại. Vui lòng thử lại.";
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Handles moving to next step
   const handleNext = () => {
     if (step === 1 && !role) {
@@ -67,15 +127,21 @@ export default function RegisterPage() {
       return;
     }
 
-    // If student finishes step 2, we just end the process
+    // If student finishes step 2 -> call API
     if (isStudent && step === 2) {
-      navigate("/"); // Navigate to home
+      handleRegisterSubmit();
       return;
     }
 
-    // If tutor finishes step 4, just show success
+    // If tutor finishes step 2 -> call API (create account first, then continue to step 3)
+    if (isTutor && step === 2) {
+      handleRegisterSubmit();
+      return;
+    }
+
+    // If tutor finishes step 4, navigate
     if (isTutor && step === 4) {
-      navigate("/"); // Or navigate to dashboard
+      navigate("/tutor/dashboard");
       return;
     }
 
@@ -301,6 +367,36 @@ export default function RegisterPage() {
   if (step === 2) {
     return (
       <div className="flex h-full grow flex-col items-center">
+        {/* Toast Notification */}
+        {error && (
+          <div
+            className={`fixed right-6 z-50 flex items-center gap-3 rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-rose-50 p-4 text-red-700 shadow-xl dark:border-red-900/50 dark:from-red-950/50 dark:to-rose-950/50 dark:text-red-400 sm:max-w-md transition-all duration-300 ease-in-out ${
+              isErrorVisible
+                ? "top-6 translate-y-0 opacity-100"
+                : "-top-20 -translate-y-full opacity-0"
+            }`}
+          >
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50">
+              <AlertCircle
+                size={24}
+                strokeWidth={2}
+                className="text-red-600 dark:text-red-400 animate-pulse-slow"
+              />
+            </div>
+            <p className="text-sm font-semibold pr-2">{error}</p>
+            <button
+              type="button"
+              onClick={() => setIsErrorVisible(false)}
+              className="ml-auto flex items-center justify-center rounded-full p-1 border border-transparent hover:bg-red-200/50 dark:hover:bg-red-900/50 transition-colors"
+            >
+              <X
+                size={20}
+                strokeWidth={2}
+                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+              />
+            </button>
+          </div>
+        )}
         {/* Header */}
         <header className="flex w-full max-w-[1200px] items-center justify-between px-6 py-6 lg:px-10">
           <Link
@@ -376,6 +472,8 @@ export default function RegisterPage() {
                   </label>
                   <input
                     required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-400"
                     placeholder="Nhập đầy đủ họ và tên"
                     type="text"
@@ -392,6 +490,8 @@ export default function RegisterPage() {
                   </label>
                   <input
                     required
+                    value={dob}
+                    onChange={(e) => setDob(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
                     type="date"
                   />
@@ -407,6 +507,8 @@ export default function RegisterPage() {
                   </label>
                   <input
                     required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-400"
                     placeholder="0xxx xxx xxx"
                     type="tel"
@@ -423,6 +525,8 @@ export default function RegisterPage() {
                   </label>
                   <input
                     required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-400"
                     placeholder="example@gmail.com"
                     type="email"
@@ -439,6 +543,8 @@ export default function RegisterPage() {
                   </label>
                   <input
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
                     type="password"
@@ -455,6 +561,8 @@ export default function RegisterPage() {
                   </label>
                   <input
                     required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-slate-400"
                     placeholder="••••••••"
                     type="password"
@@ -477,14 +585,21 @@ export default function RegisterPage() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-[2] px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                  disabled={isLoading}
+                  className="flex-[2] px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {isStudent ? "Hoàn tất đăng ký" : "Tiếp tục"}
-                  <ArrowRight
-                    size={20} // text-xl thường tương đương 20px
-                    strokeWidth={2}
-                    className="text-current transition-transform group-hover:translate-x-1"
-                  />
+                  {isLoading
+                    ? "Đang xử lý..."
+                    : isStudent
+                    ? "Hoàn tất đăng ký"
+                    : "Tiếp tục"}
+                  {!isLoading && (
+                    <ArrowRight
+                      size={20}
+                      strokeWidth={2}
+                      className="text-current transition-transform group-hover:translate-x-1"
+                    />
+                  )}
                 </button>
               </div>
             </form>
