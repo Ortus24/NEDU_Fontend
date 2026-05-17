@@ -1,16 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, ShieldOff, Shield, Star } from "lucide-react";
-import type { Tutor } from "../../types";
+import type { AdminTutorResponse } from "../../services/tutorApi";
+import { KYC_STATUS_BADGE } from "../../services/tutorApi";
 import StatusBadge from "../shared/StatusBadge";
 import { EmptyState, Pagination } from "../shared/ui";
 
 interface TutorTableProps {
-  tutors: Tutor[];
+  tutors: AdminTutorResponse[];
   currentPage: number;
   totalPages: number;
   onPageChange: (p: number) => void;
-  onToggleBan: (tutor: Tutor) => void;
+  onToggleBan: (tutor: AdminTutorResponse) => void;
 }
 
 const subjectColors: Record<string, string> = {
@@ -42,9 +43,7 @@ const TH: React.FC<{ children: React.ReactNode; className?: string }> = ({
   children,
   className = "",
 }) => (
-  <th
-    className={`px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider ${className}`}
-  >
+  <th className={`px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider ${className}`}>
     {children}
   </th>
 );
@@ -78,7 +77,7 @@ const TutorTable: React.FC<TutorTableProps> = ({
             <tr>
               <TH className="pl-6">Gia sư</TH>
               <TH>Môn dạy</TH>
-              <TH>Trạng thái</TH>
+              <TH>Trạng thái KYC</TH>
               <TH>Điểm uy tín</TH>
               <TH>Gói Sub</TH>
               <TH>Số buổi</TH>
@@ -92,19 +91,31 @@ const TutorTable: React.FC<TutorTableProps> = ({
                 {/* Avatar + Name */}
                 <td className="pl-6 pr-4 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
-                      {tutor.name.charAt(0)}
-                    </div>
+                    {tutor.avatarUrl ? (
+                      <img
+                        src={tutor.avatarUrl}
+                        alt={tutor.fullName}
+                        className="w-9 h-9 rounded-xl object-cover"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                        {tutor.fullName?.charAt(0) ?? "?"}
+                      </div>
+                    )}
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">{tutor.name}</p>
+                      <p className="text-sm font-semibold text-slate-800">{tutor.fullName}</p>
                       <p className="text-xs text-slate-400">{tutor.email}</p>
+                      {tutor.userStatus === "BANNED" && (
+                        <span className="text-[10px] font-semibold text-red-500">● Bị khóa</span>
+                      )}
                     </div>
                   </div>
                 </td>
+
                 {/* Subjects */}
                 <td className="px-4 py-4">
                   <div className="flex flex-wrap gap-1">
-                    {tutor.subjects.slice(0, 2).map((s) => (
+                    {(tutor.subjects ?? []).slice(0, 2).map((s) => (
                       <span
                         key={s}
                         className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
@@ -114,37 +125,46 @@ const TutorTable: React.FC<TutorTableProps> = ({
                         {s}
                       </span>
                     ))}
-                    {tutor.subjects.length > 2 && (
+                    {(tutor.subjects ?? []).length > 2 && (
                       <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
                         +{tutor.subjects.length - 2}
                       </span>
                     )}
+                    {(tutor.subjects ?? []).length === 0 && (
+                      <span className="text-xs text-slate-300">—</span>
+                    )}
                   </div>
                 </td>
-                {/* Status */}
+
+                {/* KYC Status */}
                 <td className="px-4 py-4">
-                  <StatusBadge variant={tutor.status} />
+                  <StatusBadge variant={KYC_STATUS_BADGE[tutor.kycStatus] as any ?? "draft"} />
                 </td>
+
                 {/* Reputation */}
                 <td className="px-4 py-4">
-                  {tutor.status === "approved" ? (
-                    <ReputationBar score={tutor.reputationScore} />
+                  {tutor.kycStatus === "APPROVED" ? (
+                    <ReputationBar score={tutor.reputationScore ?? 0} />
                   ) : (
                     <span className="text-xs text-slate-300">—</span>
                   )}
                 </td>
+
                 {/* Sub Plan */}
                 <td className="px-4 py-4">
-                  <StatusBadge variant={tutor.subscriptionPlan} />
+                  <StatusBadge variant={(tutor.subscriptionPlan ?? "free") as any} />
                 </td>
+
                 {/* Sessions */}
-                <td className="px-4 py-4 text-sm text-slate-600">{tutor.totalSessions}</td>
+                <td className="px-4 py-4 text-sm text-slate-600">{tutor.totalSessions ?? 0}</td>
+
                 {/* Earnings */}
                 <td className="px-4 py-4 text-sm font-medium text-slate-700">
-                  {tutor.totalEarnings > 0
+                  {(tutor.totalEarnings ?? 0) > 0
                     ? new Intl.NumberFormat("vi-VN").format(tutor.totalEarnings) + "đ"
                     : "—"}
                 </td>
+
                 {/* Actions */}
                 <td className="pl-4 pr-6 py-4">
                   <div className="flex items-center justify-end gap-2">
@@ -157,21 +177,15 @@ const TutorTable: React.FC<TutorTableProps> = ({
                     <button
                       onClick={() => onToggleBan(tutor)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                        tutor.status === "banned"
+                        tutor.userStatus === "BANNED"
                           ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
                           : "text-red-600 bg-red-50 hover:bg-red-100"
                       }`}
                     >
-                      {tutor.status === "banned" ? (
-                        <>
-                          <Shield size={13} />
-                          Mở khóa
-                        </>
+                      {tutor.userStatus === "BANNED" ? (
+                        <><Shield size={13} />Mở khóa</>
                       ) : (
-                        <>
-                          <ShieldOff size={13} />
-                          Khóa
-                        </>
+                        <><ShieldOff size={13} />Khóa</>
                       )}
                     </button>
                   </div>
