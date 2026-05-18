@@ -11,6 +11,7 @@ import TutorClassDetailPage from "./features/user/pages/TutorClassDetailPage";
 import TutorAvailabilityPage from "./features/user/pages/TutorAvailabilityPage";
 import TutorTrialRequestsPage from "./features/user/pages/TutorTrialRequestsPage";
 import TutorTrialRequestDetailPage from "./features/user/pages/TutorTrialRequestDetailPage";
+import TutorProfileEditPage from "./features/user/pages/TutorProfileEditPage";
 import StudentProfilePage from "./features/student_modules/StudentProfilePage";
 import CoursePage from "./features/student_modules/CoursePage";
 import StudentLearningProgressPage from "./features/student_modules/StudentLearningProgressPage";
@@ -72,6 +73,9 @@ function App() {
           {/* Yêu cầu học thử */}
           <Route path="/tutor/trial-requests" element={<TutorTrialRequestsPage />} />
           <Route path="/tutor/trial-requests/:id" element={<TutorTrialRequestDetailPage />} />
+
+          {/* Chỉnh sửa hồ sơ gia sư */}
+          <Route path="/tutor/profile" element={<TutorProfileEditPage />} />
         </Route>
 
         {/* Nhóm các trang Student Portal sử dụng chung Layout */}

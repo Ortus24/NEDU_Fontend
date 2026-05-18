@@ -84,11 +84,15 @@ export default function TutorSidebar({
         </Link>
 
         <Link
-          to="#"
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-500 hover:text-primary hover:bg-slate-100 transition-all"
+          to="/tutor/profile"
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+            pathname === "/tutor/profile"
+              ? "bg-primary/10 text-primary font-bold border-r-4 border-primary"
+              : "text-slate-500 hover:text-primary hover:bg-slate-100"
+          }`}
         >
           <Settings size={18} />
-          Settings
+          Chỉnh sửa hồ sơ
         </Link>
 
         <Link
