@@ -67,17 +67,17 @@ function LoginPage() {
         avatarUrl: data.avatarUrl,
       };
       localStorage.setItem("user", JSON.stringify(userInfo));
+      // accessToken đã được lưu vào localStorage bởi loginApi -> setAccessToken
       
       if (data.role === "ADMIN") {
         navigate("/admin");
       } else if (data.role === "TUTOR") {
-        navigate("/tutor/dashboard"); // Cập nhật dựa trên route của dự án
+        navigate("/tutor/dashboard");
       } else {
         navigate("/");
       }
     } catch (error: any) {
       const errData = error.response?.data;
-      // Backend lỗi 4xx trả về: { message, error, status, ... }
       const msg =
         errData?.message || errData?.error || "Đăng nhập thất bại. Vui lòng thử lại.";
       setErrorMsg(msg);
@@ -85,6 +85,7 @@ function LoginPage() {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen w-full flex bg-slate-50 dark:bg-slate-950 font-sans selection:bg-blue-100">
