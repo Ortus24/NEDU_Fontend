@@ -145,7 +145,7 @@ export default function TrialBookingSuccessPage() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                to="/progress"
+                to="/courses"
                 className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold text-sm shadow-lg shadow-indigo-600/20 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 order-1 sm:order-2 flex items-center justify-center"
               >
                 Xem lộ trình học

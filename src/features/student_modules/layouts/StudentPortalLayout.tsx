@@ -19,7 +19,7 @@ export default function StudentPortalLayout() {
 
   const navItems = [
     // { to: "/dashboard", label: "Tổng quan", icon: <LayoutDashboard size={18} /> },
-    { to: "/progress", label: "Khóa học", icon: <GraduationCap size={18} /> },
+    { to: "/courses", label: "Khóa học", icon: <GraduationCap size={18} /> },
     { to: "/tutor", label: "Gia sư", icon: <User size={18} /> },
     { to: "/learning-progress", label: "Tiến trình", icon: <TrendingUp size={18} /> },
     { to: "/billing", label: "Thanh toán", icon: <CreditCard size={18} /> },

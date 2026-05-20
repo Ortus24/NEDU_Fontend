@@ -78,7 +78,7 @@ function App() {
             path="/learning-progress"
             element={<StudentLearningProgressPage />}
           />
-          <Route path="/progress" element={<CoursePage />} />
+          <Route path="/courses" element={<CoursePage />} />
           <Route path="/tutor" element={<StudentTutorPage />} />
           <Route path="/billing" element={<StudentBillingPage />} />
           <Route path="/book-trial/:tutorId" element={<TrialBookingPage />} />

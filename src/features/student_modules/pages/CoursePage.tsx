@@ -204,22 +204,27 @@ export default function CoursePage() {
   const [showRevisionForm, setShowRevisionForm] = useState(false);
   const [revisionNote, setRevisionNote] = useState("");
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [myReviews, setMyReviews] = useState<any[]>([]);
 
   // 1. TẢI DỮ LIỆU TỪ BACKEND
   const loadData = async () => {
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      // Gọi song song 3 API: Enrollments, Trial Bookings, và Roadmaps
-      const [resEnrollments, resBookings, resRoadmaps] = await Promise.all([
+      // Gọi song song 4 API: Enrollments, Trial Bookings, Roadmaps, và Reviews
+      const [resEnrollments, resBookings, resRoadmaps, resReviews] = await Promise.all([
         fetch(`http://localhost:8080/api/v1/enrollments/my-courses?userId=${userId}`),
         fetch(`http://localhost:8080/api/v1/bookings/my-bookings?userId=${userId}`),
-        fetch(`http://localhost:8080/api/v1/student/roadmaps?userId=${userId}`)
+        fetch(`http://localhost:8080/api/v1/student/roadmaps?userId=${userId}`),
+        fetch(`http://localhost:8080/api/v1/student/reviews/my?userId=${userId}`)
       ]);
 
       const enrollmentsData = resEnrollments.ok ? (await resEnrollments.json()).data : [];
       const bookingsData = resBookings.ok ? (await resBookings.json()).data : [];
       const roadmapsData = resRoadmaps.ok ? (await resRoadmaps.json()).data : [];
+      const reviewsData = resReviews.ok ? (await resReviews.json()).data : [];
+      
+      setMyReviews(reviewsData || []);
 
       const loadedCourses: Course[] = [];
 
@@ -581,16 +586,21 @@ export default function CoursePage() {
                       </div>
 
                       {course.status === 'completed' ? (
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/review/${course.id}`);
-                          }}
-                          className="w-full py-2.5 px-4 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm"
-                        >
-                          <Star size={16} />
-                          Đánh giá gia sư
-                        </button>
+                        (() => {
+                          const isReviewed = myReviews.some(r => r.enrollmentId === course.id || r.trialBookingId === course.id);
+                          return (
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/review/${course.id}`);
+                              }}
+                              className={`w-full py-2.5 px-4 rounded-xl font-bold transition-all flex justify-center items-center gap-2 text-sm ${isReviewed ? 'bg-indigo-50 text-indigo-600 border border-indigo-200 hover:bg-indigo-100' : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 active:scale-[0.98]'}`}
+                            >
+                              {isReviewed ? <CheckCircle2 size={16} /> : <Star size={16} />}
+                              {isReviewed ? 'Xem lại đánh giá' : 'Đánh giá gia sư'}
+                            </button>
+                          );
+                        })()
                       ) : course.status === 'pending' ? (
                         <button
                           onClick={(e) => {
