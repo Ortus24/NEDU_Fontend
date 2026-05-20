@@ -30,14 +30,29 @@ export default function TrialBookingPage() {
   const [tutor, setTutor] = useState<TutorDetail | null>(null);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userId] = useState(() => localStorage.getItem("userId") || "11111111-1111-1111-1111-111111111111");
+  const [hasBookedTrial, setHasBookedTrial] = useState(false);
 
   useEffect(() => {
-    const fetchTutor = async () => {
+    const fetchTutorAndBookings = async () => {
       try {
-        const res = await fetch(`http://localhost:8080/api/v1/tutors/${tutorId}`);
-        if (res.ok) {
-          const json = await res.json();
+        const [resTutor, resBookings] = await Promise.all([
+          fetch(`http://localhost:8080/api/v1/tutors/${tutorId}`),
+          fetch(`http://localhost:8080/api/v1/bookings/my-bookings?userId=${userId}`)
+        ]);
+
+        if (resTutor.ok) {
+          const json = await resTutor.json();
           setTutor(json.data);
+        }
+
+        if (resBookings.ok) {
+          const bookingsJson = await resBookings.json();
+          const bookings = bookingsJson.data || [];
+          // Check if there is already a booking for this tutor (assuming tutorId is returned)
+          // If the backend doesn't return tutorId directly, we might check by tutorName. Let's check both to be safe.
+          const alreadyBooked = bookings.some((b: any) => b.tutorId === tutorId);
+          setHasBookedTrial(alreadyBooked);
         }
       } catch (error) {
         console.error("Lỗi khi tải thông tin gia sư:", error);
@@ -46,9 +61,9 @@ export default function TrialBookingPage() {
       }
     };
     if (tutorId) {
-      fetchTutor();
+      fetchTutorAndBookings();
     }
-  }, [tutorId]);
+  }, [tutorId, userId]);
 
   const handleContinue = () => {
     if (selectedSlotId) {
@@ -161,8 +176,21 @@ export default function TrialBookingPage() {
             </div>
           </div>
 
-          {/* Weekly Calendar View */}
-          <div className="-mx-8 px-8 md:mx-0 md:px-0 overflow-x-auto pb-4">
+          {hasBookedTrial ? (
+            <div className="text-center py-12 bg-indigo-50 border border-indigo-100 rounded-xl">
+              <h3 className="text-xl font-bold text-indigo-900 mb-2">Bạn đã đăng ký học thử với gia sư này</h3>
+              <p className="text-sm text-indigo-700 mb-6">Mỗi học sinh chỉ được đăng ký học thử 1 lần với mỗi gia sư.</p>
+              <button 
+                onClick={() => navigate("/courses")}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-bold shadow-md shadow-indigo-200 hover:bg-indigo-700 transition-colors"
+              >
+                Quản lý khóa học của tôi
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* Weekly Calendar View */}
+              <div className="-mx-8 px-8 md:mx-0 md:px-0 overflow-x-auto pb-4">
             <div className="grid grid-cols-7 gap-2 border-t border-slate-100 pt-8 min-w-[600px] md:min-w-0">
               {/* Week Header */}
               {daysOfWeek.map((d, i) => {
@@ -244,6 +272,8 @@ export default function TrialBookingPage() {
               </button>
             </div>
           </div>
+          </>
+          )}
         </div>
 
         {/* Information Cards: Asymmetric Bento Grid Concept */}

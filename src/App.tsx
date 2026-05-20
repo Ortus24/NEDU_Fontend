@@ -14,6 +14,7 @@ import StudentLearningProgressPage from "./features/student_modules/pages/Studen
 import StudentBillingPage from "./features/student_modules/pages/StudentBillingPage";
 import StudentPortalLayout from "./features/student_modules/layouts/StudentPortalLayout";
 import StudentTutorPage from "./features/student_modules/pages/TutorPage";
+import TutorDetailPage from "./features/student_modules/pages/TutorDetailPage";
 import SessionClassroomPage from "./features/student_modules/pages/SessionClassroomPage";
 import TrialBookingPage from "./features/student_modules/pages/TrialBookingPage";
 import TrialBookingGoalsPage from "./features/student_modules/pages/TrialBookingGoalsPage";
@@ -53,7 +54,7 @@ function App() {
           {/* <Route path="/tutor" element={<TutorPage />} /> */}
 
           {/* Đường dẫn chi tiết gia sư */}
-          <Route path="/tutor/:id" element={<TutorDetailsPage />} />
+          {/* <Route path="/tutor/:id" element={<TutorDetailsPage />} /> */}
 
           {/* Dashboard gia sư */}
           <Route path="/tutor/dashboard" element={<TutorDashboardPage />} />
@@ -80,6 +81,7 @@ function App() {
           />
           <Route path="/courses" element={<CoursePage />} />
           <Route path="/tutor" element={<StudentTutorPage />} />
+          <Route path="/tutor/:tutorId" element={<TutorDetailPage />} />
           <Route path="/billing" element={<StudentBillingPage />} />
           <Route path="/book-trial/:tutorId" element={<TrialBookingPage />} />
           <Route path="/book-trial/:tutorId/goals" element={<TrialBookingGoalsPage />} />

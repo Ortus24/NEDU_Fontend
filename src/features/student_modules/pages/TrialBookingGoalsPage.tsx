@@ -149,11 +149,10 @@ export default function TrialBookingGoalsPage() {
                   <button
                     key={lvl}
                     onClick={() => setLevel(lvl)}
-                    className={`py-3 px-6 rounded-xl border text-center text-sm font-medium transition-all active:scale-95 ${
-                      level === lvl
+                    className={`py-3 px-6 rounded-xl border text-center text-sm font-medium transition-all active:scale-95 ${level === lvl
                         ? "border-2 border-indigo-600 bg-indigo-50 text-indigo-700 font-bold"
                         : "border-slate-200 text-slate-500 hover:border-indigo-600 hover:bg-indigo-50/50"
-                    }`}
+                      }`}
                   >
                     {lvl}
                   </button>
@@ -176,11 +175,10 @@ export default function TrialBookingGoalsPage() {
                     <button
                       key={id}
                       onClick={() => toggleGoal(id)}
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium cursor-pointer border transition-colors ${
-                        isActive
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium cursor-pointer border transition-colors ${isActive
                           ? "bg-indigo-100 text-indigo-700 border-indigo-600"
                           : "bg-slate-50 text-slate-500 border-slate-200 hover:border-indigo-600"
-                      }`}
+                        }`}
                     >
                       <Icon size={18} />
                       {id}
@@ -246,14 +244,13 @@ export default function TrialBookingGoalsPage() {
           >
             Quay lại
           </Link>
-          <button 
+          <button
             onClick={handleContinue}
             disabled={isSubmitting}
-            className={`px-10 py-3 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${
-              isSubmitting 
-                ? "bg-indigo-400 text-white cursor-not-allowed shadow-none" 
+            className={`px-10 py-3 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95 ${isSubmitting
+                ? "bg-indigo-400 text-white cursor-not-allowed shadow-none"
                 : "bg-indigo-600 text-white shadow-indigo-600/20 hover:bg-indigo-700"
-            }`}
+              }`}
           >
             {isSubmitting && <Loader2 size={18} className="animate-spin" />}
             Xác nhận Đăng ký
