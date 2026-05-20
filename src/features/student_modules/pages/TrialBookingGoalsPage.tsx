@@ -36,7 +36,7 @@ export default function TrialBookingGoalsPage() {
         body: JSON.stringify({
           tutorId,
           // Use a dummy studentId since auth is not integrated yet
-          studentId: "dbc07b19-89af-48ac-badf-eb161cd90834",
+          studentId: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
           availabilitySlotId: slotId,
           studentScore: level,
           studentGoal: goals.join(", "),
