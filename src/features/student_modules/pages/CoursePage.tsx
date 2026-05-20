@@ -35,6 +35,7 @@ interface Course {
   roadmapStatus?: "DRAFT" | "PENDING_APPROVAL" | "REVISION_REQUESTED" | "APPROVED" | "REJECTED" | "CANCELLED";
   trialStatus?: "PENDING" | "CONFIRMED" | "REJECTED" | "COMPLETED" | "CANCELLED";
   roadmapId?: string;
+  isPaid?: boolean;
 }
 
 interface Session {
@@ -78,7 +79,7 @@ function SessionCard({ session, onCheckIn }: SessionCardProps) {
     month: "2-digit",
     year: "numeric"
   });
-  
+
   const timeStr = new Date(session.scheduledAt).toLocaleTimeString("vi-VN", {
     hour: "2-digit",
     minute: "2-digit"
@@ -87,25 +88,22 @@ function SessionCard({ session, onCheckIn }: SessionCardProps) {
   return (
     <div className="relative pl-8 md:pl-10 pb-10">
       <div className={`absolute left-0 top-0 h-full w-[2px] ${isLocked ? "bg-slate-200" : "bg-indigo-500/20"}`}></div>
-      <div className={`absolute left-[-9px] top-0 h-5 w-5 rounded-full bg-white border-2 flex items-center justify-center z-10 ${
-        isCompleted ? "border-emerald-500" : isActive ? "border-indigo-500" : "border-slate-300"
-      }`}>
+      <div className={`absolute left-[-9px] top-0 h-5 w-5 rounded-full bg-white border-2 flex items-center justify-center z-10 ${isCompleted ? "border-emerald-500" : isActive ? "border-indigo-500" : "border-slate-300"
+        }`}>
         {isCompleted && <CheckCircle2 size={12} className="text-emerald-600 fill-emerald-50" />}
         {isActive && <div className="h-2.5 w-2.5 rounded-full bg-indigo-600 animate-pulse" />}
         {isLocked && <Lock size={10} className="text-slate-400" />}
       </div>
 
-      <div className={`rounded-2xl p-5 bg-white border ${
-        isActive ? "border-indigo-500 shadow-md ring-2 ring-indigo-50" : "border-slate-200"
-      } ${isLocked ? "opacity-90" : ""} ${isCancelled ? "opacity-60 line-through" : ""}`}>
+      <div className={`rounded-2xl p-5 bg-white border ${isActive ? "border-indigo-500 shadow-md ring-2 ring-indigo-50" : "border-slate-200"
+        } ${isLocked ? "opacity-90" : ""} ${isCancelled ? "opacity-60 line-through" : ""}`}>
         <div className="flex flex-col md:flex-row justify-between gap-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${
-                isCompleted ? "bg-emerald-100 text-emerald-700" : 
-                isActive ? "bg-indigo-600 text-white" : 
-                isCancelled ? "bg-red-100 text-red-700" : "bg-slate-100 text-slate-500"
-              }`}>
+              <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded ${isCompleted ? "bg-emerald-100 text-emerald-700" :
+                isActive ? "bg-indigo-600 text-white" :
+                  isCancelled ? "bg-red-100 text-red-700" : "bg-slate-100 text-slate-500"
+                }`}>
                 {isCompleted ? "Xong" : isActive ? "Đang diễn ra" : isCancelled ? "Đã hủy" : `Buổi ${session.sessionNumber}`}
               </span>
               <span className="text-xs text-slate-400 font-bold">{dateStr} {timeStr && `- ${timeStr}`} ({session.durationMinutes} phút)</span>
@@ -211,19 +209,21 @@ export default function CoursePage() {
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      // Gọi song song 4 API: Enrollments, Trial Bookings, Roadmaps, và Reviews
-      const [resEnrollments, resBookings, resRoadmaps, resReviews] = await Promise.all([
+      // Gọi song song 5 API: Enrollments, Bookings, Roadmaps, Reviews, Transactions
+      const [resEnrollments, resBookings, resRoadmaps, resReviews, resTransactions] = await Promise.all([
         fetch(`http://localhost:8080/api/v1/enrollments/my-courses?userId=${userId}`),
         fetch(`http://localhost:8080/api/v1/bookings/my-bookings?userId=${userId}`),
         fetch(`http://localhost:8080/api/v1/student/roadmaps?userId=${userId}`),
-        fetch(`http://localhost:8080/api/v1/student/reviews/my?userId=${userId}`)
+        fetch(`http://localhost:8080/api/v1/student/reviews/my?userId=${userId}`),
+        fetch(`http://localhost:8080/api/v1/student/payments/transactions?userId=${userId}`)
       ]);
 
       const enrollmentsData = resEnrollments.ok ? (await resEnrollments.json()).data : [];
       const bookingsData = resBookings.ok ? (await resBookings.json()).data : [];
       const roadmapsData = resRoadmaps.ok ? (await resRoadmaps.json()).data : [];
       const reviewsData = resReviews.ok ? (await resReviews.json()).data : [];
-      
+      const transactionsData = resTransactions.ok ? (await resTransactions.json()).data : [];
+
       setMyReviews(reviewsData || []);
 
       const loadedCourses: Course[] = [];
@@ -231,8 +231,8 @@ export default function CoursePage() {
       // A. Map Enrollments (Active / Completed)
       if (enrollmentsData && Array.isArray(enrollmentsData)) {
         enrollmentsData.forEach((item: any) => {
-          const progressPercent = item.totalSessions > 0 
-            ? Math.round((item.completedSessions / item.totalSessions) * 100) 
+          const progressPercent = item.totalSessions > 0
+            ? Math.round((item.completedSessions / item.totalSessions) * 100)
             : 0;
 
           loadedCourses.push({
@@ -256,7 +256,7 @@ export default function CoursePage() {
       if (bookingsData && Array.isArray(bookingsData)) {
         bookingsData.forEach((item: any) => {
           const date = item.scheduledAt ? new Date(item.scheduledAt) : null;
-          const nextSessionStr = date 
+          const nextSessionStr = date
             ? date.toLocaleString("vi-VN", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })
             : "Chưa đặt lịch";
 
@@ -281,8 +281,13 @@ export default function CoursePage() {
         roadmapsData.forEach((item: any) => {
           // Lọc ra các roadmap chưa thanh toán (chưa có trong enrollments)
           const isEnrolled = loadedCourses.some(c => c.roadmapId === item.roadmapId);
-          
+
           if (!isEnrolled) {
+            // Kiểm tra xem đã có giao dịch SUCCESS nào cho roadmap này chưa
+            const isPaid = transactionsData && transactionsData.some((t: any) => 
+              t.roadmapId === item.roadmapId && t.paymentStatus === "SUCCESS"
+            );
+
             loadedCourses.push({
               id: item.roadmapId,
               title: item.title || "Lộ trình học mới tạo",
@@ -290,12 +295,13 @@ export default function CoursePage() {
               progress: 0,
               totalSessions: item.totalSessions || 0,
               completedSessions: 0,
-              nextSession: item.status === "APPROVED" ? "Sẵn sàng thanh toán" : "Đang chờ duyệt",
+              nextSession: isPaid ? "Đã thanh toán" : (item.status === "APPROVED" ? "Sẵn sàng thanh toán" : "Đang chờ duyệt"),
               category: "LỘ TRÌNH",
-              escrowStatus: "Chờ thanh toán",
+              escrowStatus: isPaid ? "Đã thanh toán" : "Chờ thanh toán",
               status: "pending",
               totalPrice: item.totalFee ? `${item.totalFee.toLocaleString("vi-VN")} VNĐ` : "Chưa cập nhật",
-              roadmapStatus: item.status // DRAFT, PENDING_APPROVAL, APPROVED, etc.
+              roadmapStatus: item.status, // DRAFT, PENDING_APPROVAL, APPROVED, etc.
+              isPaid: isPaid
             });
           }
         });
@@ -327,7 +333,7 @@ export default function CoursePage() {
     if (selectedCourseId) {
       const selected = courses.find(c => c.id === selectedCourseId);
       const roadmapId = selected?.status === "pending" ? selected.id : selected?.roadmapId;
-      
+
       if (roadmapId) {
         setIsRoadmapLoading(true);
         fetch(`http://localhost:8080/api/v1/student/roadmaps/${roadmapId}?userId=${userId}`)
@@ -362,11 +368,11 @@ export default function CoursePage() {
   const handleRoadmapAction = async (action: 'approve' | 'revision' | 'cancel') => {
     if (!selectedCourseId || !roadmapDetail) return;
     setIsActionLoading(true);
-    
+
     try {
       let url = `http://localhost:8080/api/v1/student/roadmaps/${roadmapDetail.roadmapId}/${action}?userId=${userId}`;
       let options: RequestInit = { method: "POST" };
-      
+
       if (action === 'revision') {
         if (!revisionNote || revisionNote.trim().length < 10) {
           alert("Vui lòng nhập lý do chỉnh sửa (ít nhất 10 ký tự).");
@@ -379,13 +385,13 @@ export default function CoursePage() {
 
       const res = await fetch(url, options);
       const data = await res.json();
-      
+
       if (res.ok && data.status === 200) {
         alert("Thao tác thành công!");
         setShowRevisionForm(false);
         setRevisionNote("");
         loadData(); // Reload main course list
-        
+
         // Re-fetch roadmap details to update UI immediately
         const detailRes = await fetch(`http://localhost:8080/api/v1/student/roadmaps/${roadmapDetail.roadmapId}?userId=${userId}`);
         const detailData = await detailRes.json();
@@ -466,9 +472,8 @@ export default function CoursePage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`pb-4 text-sm font-bold transition-all relative ${
-                  activeTab === tab.id ? "text-indigo-600" : "text-slate-400 hover:text-slate-600"
-                }`}
+                className={`pb-4 text-sm font-bold transition-all relative ${activeTab === tab.id ? "text-indigo-600" : "text-slate-400 hover:text-slate-600"
+                  }`}
               >
                 {tab.label}
                 {activeTab === tab.id && (
@@ -517,8 +522,8 @@ export default function CoursePage() {
                   <div className="w-full xl:w-48 h-48 xl:h-auto relative shrink-0">
                     <img
                       className="w-full h-full object-cover"
-                      src={course.category === "HỌC THỬ" 
-                        ? "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600&auto=format&fit=crop" 
+                      src={course.category === "HỌC THỬ"
+                        ? "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=600&auto=format&fit=crop"
                         : "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=600&auto=format&fit=crop"
                       }
                       alt={course.title}
@@ -539,11 +544,23 @@ export default function CoursePage() {
                         </div>
                       ) : course.status === 'pending' ? (
                         <div className="flex items-center gap-1 shrink-0 ml-2">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                            course.roadmapStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'
-                          }`}>
-                            {course.roadmapStatus === 'APPROVED' ? 'Đã duyệt' : 'Chờ duyệt'}
-                          </span>
+                          {course.roadmapStatus === 'APPROVED' && course.isPaid ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">✅ Đã thanh toán</span>
+                          ) : course.roadmapStatus === 'APPROVED' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700">✔ Đã duyệt</span>
+                          ) : course.roadmapStatus === 'PENDING_APPROVAL' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-sky-100 text-sky-700">⏳ Chờ duyệt</span>
+                          ) : course.roadmapStatus === 'REVISION_REQUESTED' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700">✏️ Cần chỉnh sửa</span>
+                          ) : course.roadmapStatus === 'DRAFT' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500">📄 Bản nháp</span>
+                          ) : course.roadmapStatus === 'REJECTED' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-red-100 text-red-700">❌ Bị từ chối</span>
+                          ) : course.roadmapStatus === 'CANCELLED' ? (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-100 text-rose-700">🚫 Đã hủy</span>
+                          ) : (
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-500">Không rõ</span>
+                          )}
                         </div>
                       ) : course.status === 'trial' ? (
                         <div className="flex items-center gap-1 shrink-0 ml-2">
@@ -589,7 +606,7 @@ export default function CoursePage() {
                         (() => {
                           const isReviewed = myReviews.some(r => r.enrollmentId === course.id || r.trialBookingId === course.id);
                           return (
-                            <button 
+                            <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 navigate(`/review/${course.id}`);
@@ -602,22 +619,78 @@ export default function CoursePage() {
                           );
                         })()
                       ) : course.status === 'pending' ? (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (course.roadmapStatus === 'APPROVED') {
-                              navigate('/payment');
-                            } else {
-                              navigate(`/roadmap/${course.id}`);
-                            }
-                          }}
-                          className={`w-full py-2.5 px-4 text-white rounded-xl font-bold active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm shadow-md ${
-                            course.roadmapStatus === 'APPROVED' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-200' : 'bg-sky-500 hover:bg-sky-600 shadow-sky-200'
-                          }`}
-                        >
-                          {course.roadmapStatus === 'APPROVED' ? <CheckCircle2 size={16} /> : <Timer size={16} />}
-                          {course.roadmapStatus === 'APPROVED' ? 'Thanh toán & Nhập học' : 'Xem chi tiết lộ trình'}
-                        </button>
+                        (() => {
+                          const rs = course.roadmapStatus;
+                          if (rs === 'APPROVED' && !course.isPaid) {
+                            return (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); navigate(`/payment/${course.id}`); }}
+                                className="w-full py-2.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm shadow-md shadow-emerald-200 hover:from-emerald-600 hover:to-teal-600"
+                              >
+                                <CheckCircle2 size={16} /> Thanh toán &amp; Nhập học
+                              </button>
+                            );
+                          }
+                          if (rs === 'APPROVED' && course.isPaid) {
+                            return (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); navigate(`/roadmap/${course.id}`); }}
+                                className="w-full py-2.5 px-4 bg-indigo-600 text-white rounded-xl font-bold active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm shadow-md shadow-indigo-200 hover:bg-indigo-700"
+                              >
+                                <BookOpen size={16} /> Xem lộ trình
+                              </button>
+                            );
+                          }
+                          if (rs === 'PENDING_APPROVAL') {
+                            return (
+                              <button disabled className="w-full py-2.5 px-4 bg-sky-50 text-sky-600 border border-sky-200 rounded-xl font-bold flex justify-center items-center gap-2 text-sm cursor-default">
+                                <Timer size={16} /> Đang chờ gia sư duyệt...
+                              </button>
+                            );
+                          }
+                          if (rs === 'REVISION_REQUESTED') {
+                            return (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); navigate(`/roadmap/${course.id}`); }}
+                                className="w-full py-2.5 px-4 bg-amber-500 text-white rounded-xl font-bold active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm shadow-md shadow-amber-200 hover:bg-amber-600"
+                              >
+                                <FileText size={16} /> Xem yêu cầu chỉnh sửa
+                              </button>
+                            );
+                          }
+                          if (rs === 'DRAFT') {
+                            return (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); navigate(`/roadmap/${course.id}`); }}
+                                className="w-full py-2.5 px-4 bg-slate-100 text-slate-600 border border-slate-200 rounded-xl font-bold active:scale-[0.98] transition-all flex justify-center items-center gap-2 text-sm hover:bg-slate-200"
+                              >
+                                <FileText size={16} /> Xem bản nháp
+                              </button>
+                            );
+                          }
+                          if (rs === 'REJECTED') {
+                            return (
+                              <button disabled className="w-full py-2.5 px-4 bg-red-50 text-red-500 border border-red-200 rounded-xl font-bold flex justify-center items-center gap-2 text-sm cursor-default">
+                                <AlertCircle size={16} /> Lộ trình bị từ chối
+                              </button>
+                            );
+                          }
+                          if (rs === 'CANCELLED') {
+                            return (
+                              <button disabled className="w-full py-2.5 px-4 bg-rose-50 text-rose-500 border border-rose-200 rounded-xl font-bold flex justify-center items-center gap-2 text-sm cursor-default">
+                                <AlertCircle size={16} /> Lộ trình đã bị hủy
+                              </button>
+                            );
+                          }
+                          return (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); navigate(`/roadmap/${course.id}`); }}
+                              className="w-full py-2.5 px-4 bg-slate-100 text-slate-600 rounded-xl font-bold transition-all flex justify-center items-center gap-2 text-sm hover:bg-slate-200"
+                            >
+                              <FileText size={16} /> Xem lộ trình
+                            </button>
+                          );
+                        })()
                       ) : course.status === 'trial' ? (
                         course.trialStatus === 'CONFIRMED' ? (
                           <button
@@ -732,128 +805,127 @@ export default function CoursePage() {
             </div>
 
             {selectedCourse?.status === 'pending' && roadmapDetail && (
-               <div className="mb-4 mt-4 p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
-                 <div className="flex items-center flex-wrap gap-3 mb-1">
-                   <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                      roadmapDetail.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : 
-                      roadmapDetail.status === 'REVISION_REQUESTED' ? 'bg-amber-100 text-amber-700' :
+              <div className="mb-4 mt-4 p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                <div className="flex items-center flex-wrap gap-3 mb-1">
+                  <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${roadmapDetail.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' :
+                    roadmapDetail.status === 'REVISION_REQUESTED' ? 'bg-amber-100 text-amber-700' :
                       roadmapDetail.status === 'REJECTED' || roadmapDetail.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
-                      'bg-sky-100 text-sky-700'
+                        'bg-sky-100 text-sky-700'
                     }`}>
-                      Trạng thái: {roadmapDetail.status}
+                    Trạng thái: {roadmapDetail.status}
+                  </span>
+                  {roadmapDetail.status === 'PENDING_APPROVAL' && (
+                    <span className="text-xs text-slate-500 font-bold">
+                      Đã yêu cầu sửa: <span className={roadmapDetail.revisionCount >= (roadmapDetail.maxRevisionAllowed || 3) ? "text-red-500" : "text-indigo-600"}>{roadmapDetail.revisionCount}/{roadmapDetail.maxRevisionAllowed || 3}</span> lần
                     </span>
-                   {roadmapDetail.status === 'PENDING_APPROVAL' && (
-                     <span className="text-xs text-slate-500 font-bold">
-                       Đã yêu cầu sửa: <span className={roadmapDetail.revisionCount >= (roadmapDetail.maxRevisionAllowed || 3) ? "text-red-500" : "text-indigo-600"}>{roadmapDetail.revisionCount}/{roadmapDetail.maxRevisionAllowed || 3}</span> lần
-                     </span>
-                   )}
-                 </div>
-                 
-                 {roadmapDetail.status === 'PENDING_APPROVAL' && (
-                   <div className="mt-4 pt-4 border-t border-slate-100">
-                     {!showRevisionForm ? (
-                       <div className="flex flex-wrap gap-3">
-                         <button 
-                           onClick={() => handleRoadmapAction('approve')}
-                           disabled={isActionLoading}
-                           className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-black rounded-xl transition-all shadow-sm shadow-emerald-200 active:scale-95 disabled:opacity-50"
-                         >
-                           Đồng ý Lộ trình
-                         </button>
-                         <button 
-                           onClick={() => setShowRevisionForm(true)}
-                           disabled={isActionLoading || roadmapDetail.revisionCount >= (roadmapDetail.maxRevisionAllowed || 3)}
-                           className="px-5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-black rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
-                         >
-                           Yêu cầu chỉnh sửa
-                         </button>
-                         <button 
-                           onClick={() => handleRoadmapAction('cancel')}
-                           disabled={isActionLoading}
-                           className="px-5 py-2.5 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-black rounded-xl transition-all active:scale-95 disabled:opacity-50 ml-auto"
-                         >
-                           Từ chối / Hủy
-                         </button>
-                       </div>
-                     ) : (
-                       <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl animate-in fade-in zoom-in-95 duration-200">
-                         <h4 className="text-xs font-black text-slate-700 mb-2 uppercase">Nhập yêu cầu chỉnh sửa</h4>
-                         <textarea 
-                           value={revisionNote}
-                           onChange={(e) => setRevisionNote(e.target.value)}
-                           placeholder="Nhập ghi chú chi tiết cho gia sư (ít nhất 10 ký tự)..."
-                           className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs font-medium mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 min-h-[100px] resize-y transition-all"
-                         ></textarea>
-                         <div className="flex gap-3">
-                           <button 
-                             onClick={() => handleRoadmapAction('revision')}
-                             disabled={isActionLoading}
-                             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-lg transition-all active:scale-95 disabled:opacity-50"
-                           >
-                             Gửi yêu cầu
-                           </button>
-                           <button 
-                             onClick={() => {
-                               setShowRevisionForm(false);
-                               setRevisionNote("");
-                             }}
-                             disabled={isActionLoading}
-                             className="px-4 py-2 bg-white text-slate-500 border border-slate-200 text-xs font-black rounded-lg hover:bg-slate-50 transition-all active:scale-95 disabled:opacity-50"
-                           >
-                             Hủy bỏ
-                           </button>
-                         </div>
-                       </div>
-                     )}
-                   </div>
-                 )}
-               </div>
+                  )}
+                </div>
+
+                {roadmapDetail.status === 'PENDING_APPROVAL' && (
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    {!showRevisionForm ? (
+                      <div className="flex flex-wrap gap-3">
+                        <button
+                          onClick={() => handleRoadmapAction('approve')}
+                          disabled={isActionLoading}
+                          className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-black rounded-xl transition-all shadow-sm shadow-emerald-200 active:scale-95 disabled:opacity-50"
+                        >
+                          Đồng ý Lộ trình
+                        </button>
+                        <button
+                          onClick={() => setShowRevisionForm(true)}
+                          disabled={isActionLoading || roadmapDetail.revisionCount >= (roadmapDetail.maxRevisionAllowed || 3)}
+                          className="px-5 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 text-xs font-black rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Yêu cầu chỉnh sửa
+                        </button>
+                        <button
+                          onClick={() => handleRoadmapAction('cancel')}
+                          disabled={isActionLoading}
+                          className="px-5 py-2.5 bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-black rounded-xl transition-all active:scale-95 disabled:opacity-50 ml-auto"
+                        >
+                          Từ chối / Hủy
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl animate-in fade-in zoom-in-95 duration-200">
+                        <h4 className="text-xs font-black text-slate-700 mb-2 uppercase">Nhập yêu cầu chỉnh sửa</h4>
+                        <textarea
+                          value={revisionNote}
+                          onChange={(e) => setRevisionNote(e.target.value)}
+                          placeholder="Nhập ghi chú chi tiết cho gia sư (ít nhất 10 ký tự)..."
+                          className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs font-medium mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 min-h-[100px] resize-y transition-all"
+                        ></textarea>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => handleRoadmapAction('revision')}
+                            disabled={isActionLoading}
+                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-lg transition-all active:scale-95 disabled:opacity-50"
+                          >
+                            Gửi yêu cầu
+                          </button>
+                          <button
+                            onClick={() => {
+                              setShowRevisionForm(false);
+                              setRevisionNote("");
+                            }}
+                            disabled={isActionLoading}
+                            className="px-4 py-2 bg-white text-slate-500 border border-slate-200 text-xs font-black rounded-lg hover:bg-slate-50 transition-all active:scale-95 disabled:opacity-50"
+                          >
+                            Hủy bỏ
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
 
             {isRoadmapLoading ? (
-               <div className="flex justify-center py-8"><div className="h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div></div>
+              <div className="flex justify-center py-8"><div className="h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div></div>
             ) : roadmapModules.length > 0 ? (
-               <div className="space-y-6 mt-6">
-                 <div>
-                   <h4 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">Lộ trình chi tiết (Modules)</h4>
-                   <div className="space-y-2">
-                     {roadmapModules.map(module => (
-                        <RoadmapModuleCard key={module.moduleId} module={module} />
-                     ))}
-                   </div>
-                 </div>
-                 
-                 {(selectedCourse?.status === 'active' || selectedCourse?.status === 'completed') && (
-                   <div>
-                     <h4 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider mt-8">Các buổi học thực tế</h4>
-                     {courseSessions.length > 0 ? (
-                        <div className="space-y-2">
-                          {courseSessions.map((session) => (
-                            <SessionCard 
-                              key={session.id} 
-                              session={session} 
-                              onCheckIn={handleCheckIn} 
-                            />
-                          ))}
-                        </div>
-                     ) : (
-                        <div className="bg-slate-50 border border-slate-200 border-dashed rounded-2xl p-8 text-center space-y-3">
-                          <p className="text-slate-800 font-bold">Chưa khởi tạo buổi học</p>
-                          <p className="text-slate-400 text-xs">Các buổi học sẽ được hiển thị khi gia sư lên lịch dạy.</p>
-                        </div>
-                     )}
-                   </div>
-                 )}
-               </div>
+              <div className="space-y-6 mt-6">
+                <div>
+                  <h4 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">Lộ trình chi tiết (Modules)</h4>
+                  <div className="space-y-2">
+                    {roadmapModules.map(module => (
+                      <RoadmapModuleCard key={module.moduleId} module={module} />
+                    ))}
+                  </div>
+                </div>
+
+                {(selectedCourse?.status === 'active' || selectedCourse?.status === 'completed') && (
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider mt-8">Các buổi học thực tế</h4>
+                    {courseSessions.length > 0 ? (
+                      <div className="space-y-2">
+                        {courseSessions.map((session) => (
+                          <SessionCard
+                            key={session.id}
+                            session={session}
+                            onCheckIn={handleCheckIn}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="bg-slate-50 border border-slate-200 border-dashed rounded-2xl p-8 text-center space-y-3">
+                        <p className="text-slate-800 font-bold">Chưa khởi tạo buổi học</p>
+                        <p className="text-slate-400 text-xs">Các buổi học sẽ được hiển thị khi gia sư lên lịch dạy.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             ) : (
               courseSessions.length > 0 ? (
                 <div className="space-y-2 mt-6">
                   <h4 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">Các buổi học thực tế</h4>
                   {courseSessions.map((session) => (
-                    <SessionCard 
-                      key={session.id} 
-                      session={session} 
-                      onCheckIn={handleCheckIn} 
+                    <SessionCard
+                      key={session.id}
+                      session={session}
+                      onCheckIn={handleCheckIn}
                     />
                   ))}
                 </div>

@@ -20,6 +20,7 @@ import TrialBookingPage from "./features/student_modules/pages/TrialBookingPage"
 import TrialBookingGoalsPage from "./features/student_modules/pages/TrialBookingGoalsPage";
 import TrialBookingSuccessPage from "./features/student_modules/pages/TrialBookingSuccessPage";
 import PaymentPage from "./features/student_modules/pages/PaymentPage";
+import PaymentResultPage from "./features/student_modules/pages/PaymentResultPage";
 import ReviewPage from "./features/student_modules/pages/ReviewPage";
 import RoadmapDetailPage from "./features/student_modules/pages/RoadmapDetailPage";
 import "./App.css";
@@ -86,7 +87,8 @@ function App() {
           <Route path="/book-trial/:tutorId" element={<TrialBookingPage />} />
           <Route path="/book-trial/:tutorId/goals" element={<TrialBookingGoalsPage />} />
           <Route path="/book-trial/:tutorId/success" element={<TrialBookingSuccessPage />} />
-          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/payment/:roadmapId" element={<PaymentPage />} />
+          <Route path="/payment-result" element={<PaymentResultPage />} />
           <Route path="/review/:courseId" element={<ReviewPage />} />
           <Route path="/roadmap/:courseId" element={<RoadmapDetailPage />} />
         </Route>
